@@ -1,26 +1,44 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using NeoMutalyzer.Annotated;
 using NeoMutalyzerShared;
 
-namespace NeoMutalyzer
+namespace NeoMutalyzer.Validation
 {
     public static class TranscriptValidator
     {
-        public static void Validate(Transcript transcript, AnnotatedTranscript annotatedTranscript)
+        public static void Validate(Position position, Dictionary<string, GenBankTranscript> idToTranscript)
         {
-            ValidateMapping(transcript,           annotatedTranscript.CdnaPos,   annotatedTranscript.CdsPos,
-                annotatedTranscript.AminoAcidPos, annotatedTranscript.RefAllele, annotatedTranscript.RefAminoAcids);
-
-            Interval expectedRightCdsPos = VariantRotator.Right(annotatedTranscript.CdsPos,
-                annotatedTranscript.RefAllele, annotatedTranscript.AltAllele, annotatedTranscript.Type,
-                transcript.CdsSequence).ShiftedPosition;
-            
-            ValidateHgvsCoding(transcript, annotatedTranscript.HgvsCoding, expectedRightCdsPos);
-            ValidateHgvsProtein(transcript, annotatedTranscript.HgvsProtein);
+            foreach (Variant variant in position.Variants)
+            {
+                foreach (Transcript transcript in variant.Transcripts)
+                {
+                    if (!idToTranscript.TryGetValue(transcript.Id, out GenBankTranscript gbTranscript))
+                    {
+                        Console.WriteLine($"ERROR: Unable to find the following transcript: {transcript.Id}");
+                        Environment.Exit(1);
+                    }
+                    
+                    ValidateTranscript(gbTranscript, transcript, variant.Type);
+                }
+            }
         }
 
-        private static void ValidateHgvsProtein(Transcript transcript, string hgvsProtein)
+        private static void ValidateTranscript(GenBankTranscript gbTranscript, Transcript transcript, VariantType variantType)
+        {
+            ValidateMapping(gbTranscript, transcript.CdnaPos, transcript.CdsPos, transcript.AminoAcidPos,
+                transcript.RefAllele,     transcript.RefAminoAcids);
+
+            Interval expectedRightCdsPos = VariantRotator.Right(transcript.CdsPos, transcript.RefAllele,
+                transcript.AltAllele, variantType, gbTranscript.CdsSequence).ShiftedPosition;
+
+            ValidateHgvsCoding(gbTranscript, transcript.HgvsCoding, expectedRightCdsPos);
+            ValidateHgvsProtein(gbTranscript, transcript.HgvsProtein);
+        }
+
+        private static void ValidateHgvsProtein(GenBankTranscript genBankTranscript, string hgvsProtein)
         {
             // NP_000305.3:p.(Thr319Ter)
             var regex = new Regex(@"[^:]+:p.\((\D+)(\d+)([^\)]+)\)", RegexOptions.Compiled);
@@ -36,7 +54,7 @@ namespace NeoMutalyzer
             string altAminoAcids = AminoAcids.GetIupacCode(altAminoAcids3);
             
             var    aaPos         = new Interval(aaStart, aaStart);
-            string aa            = transcript.GetAminoAcids(aaPos);
+            string aa            = genBankTranscript.GetAminoAcids(aaPos);
             
             if (refAminoAcids != aa)
                 Console.WriteLine(
@@ -46,7 +64,7 @@ namespace NeoMutalyzer
             // var result = VariantRotator.Right(aaPos, refAminoAcids, altAminoAcids, variantType, refSequence);
         }
 
-        private static void ValidateHgvsCoding(Transcript transcript, string hgvsCoding, Interval expectedRightCdsPos)
+        private static void ValidateHgvsCoding(GenBankTranscript genBankTranscript, string hgvsCoding, Interval expectedRightCdsPos)
         {
             // NM_000314.6:c.956_959delACTT
             var regex = new Regex(@"[^:]+:c.(\d+)_(\d+)del([ACGT]+)", RegexOptions.Compiled);
@@ -59,7 +77,7 @@ namespace NeoMutalyzer
             string refAllele = match.Groups[3].Value;
 
             var    cdsPos = new Interval(cdsStart, cdsEnd);
-            string cds    = transcript.GetCds(cdsPos);
+            string cds    = genBankTranscript.GetCds(cdsPos);
             
             if (refAllele != cds)
                 Console.WriteLine(
@@ -72,12 +90,12 @@ namespace NeoMutalyzer
             }
         }
 
-        private static void ValidateMapping(Transcript transcript, in Interval cdnaPos, in Interval cdsPos,
+        private static void ValidateMapping(GenBankTranscript genBankTranscript, in Interval cdnaPos, in Interval cdsPos,
             in Interval aminoAcidPos, string refAllele, string refAminoAcids)
         {
-            string cdna = transcript.GetCdna(cdnaPos);
-            string cds  = transcript.GetCds(cdsPos);
-            string aa   = transcript.GetAminoAcids(aminoAcidPos);
+            string cdna = genBankTranscript.GetCdna(cdnaPos);
+            string cds  = genBankTranscript.GetCds(cdsPos);
+            string aa   = genBankTranscript.GetAminoAcids(aminoAcidPos);
 
             if (refAllele != cdna)
                 throw new InvalidDataException(

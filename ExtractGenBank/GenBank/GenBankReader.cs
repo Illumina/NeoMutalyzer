@@ -54,22 +54,22 @@ namespace ExtractGenBank.GenBank
             _parser     = new GenBankFeatureParser(_readerData);
         }
 
-        public Dictionary<string, Transcript> GetIdToTranscript()
+        public Dictionary<string, GenBankTranscript> GetIdToTranscript()
         {
-            var idToTranscript = new Dictionary<string, Transcript>();
+            var idToTranscript = new Dictionary<string, GenBankTranscript>();
             
             while (true)
             {
-                Transcript transcript = ParseTranscript();
-                if (transcript == null) break;
+                GenBankTranscript genBankTranscript = ParseTranscript();
+                if (genBankTranscript == null) break;
 
-                idToTranscript[transcript.Id] = transcript;
+                idToTranscript[genBankTranscript.Id] = genBankTranscript;
             }
 
             return idToTranscript;
         }
 
-        private Transcript ParseTranscript()
+        private GenBankTranscript ParseTranscript()
         {
             string         id  = GetVersion();
             if (id == null) return null;
@@ -88,7 +88,7 @@ namespace ExtractGenBank.GenBank
             }
 
             string cdnaSequence = ParseSequence();
-            return new Transcript(id, cdnaSequence, cds?.Start, cds?.End, cds?.Translation);
+            return new GenBankTranscript(id, cdnaSequence, cds?.Start, cds?.End, cds?.Translation);
         }
 
         private void FindFeatures()

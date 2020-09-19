@@ -2,7 +2,7 @@
 
 namespace NeoMutalyzerShared
 {
-    public readonly struct Interval : IEquatable<Interval>
+    public sealed class Interval : IEquatable<Interval>
     {
         public readonly int Start;
         public readonly int End;
@@ -15,7 +15,12 @@ namespace NeoMutalyzerShared
 
         public int Length => End - Start + 1;
 
-        public bool Equals(Interval other) => Start == other.Start && End == other.End;
+        public bool Equals(Interval other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Start == other.Start && End == other.End;
+        }
 
         public override int GetHashCode()
         {

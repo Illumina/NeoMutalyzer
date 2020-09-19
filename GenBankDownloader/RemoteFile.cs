@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GenBankDownloader
+﻿namespace GenBankDownloader
 {
     public sealed class RemoteFile
     {

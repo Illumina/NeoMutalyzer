@@ -1,13 +1,13 @@
 ﻿namespace NeoMutalyzerShared
 {
-    public sealed class Transcript
+    public sealed class GenBankTranscript
     {
         public readonly string Id;
         public readonly string CdnaSequence;
         public readonly string CdsSequence;
         public readonly string AminoAcidSequence;
 
-        public Transcript(string id, string cdnaSequence, int? cdsStart, int? cdsEnd, string aaSequence)
+        public GenBankTranscript(string id, string cdnaSequence, int? cdsStart, int? cdsEnd, string aaSequence)
         {
             Id                = id;
             CdnaSequence      = cdnaSequence;
@@ -20,7 +20,7 @@
             CdsSequence = cdnaSequence.Substring(cdsStart.Value - 1, cdsLength);
         }
         
-        public Transcript(string id, string cdnaSequence, string cdsSequence, string aaSequence)
+        public GenBankTranscript(string id, string cdnaSequence, string cdsSequence, string aaSequence)
         {
             Id                = id;
             CdnaSequence      = cdnaSequence;

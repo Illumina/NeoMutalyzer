@@ -1,4 +1,4 @@
-﻿namespace NeoMutalyzer
+﻿namespace NeoMutalyzer.Annotated
 {
     public enum VariantType : byte
     {

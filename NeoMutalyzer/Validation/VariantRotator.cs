@@ -1,7 +1,8 @@
 ﻿using System;
+using NeoMutalyzer.Annotated;
 using NeoMutalyzerShared;
 
-namespace NeoMutalyzer
+namespace NeoMutalyzer.Validation
 {
     public static class VariantRotator
     {

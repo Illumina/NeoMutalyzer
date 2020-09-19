@@ -25,7 +25,7 @@ namespace ExtractGenBank
             if (!outputDataPath.EndsWith(".gz")) outputDataPath += ".gz";
 
             Console.Write("- parsing GenBank file... ");
-            Dictionary<string, Transcript> idToTranscript = LoadTranscripts(inputGenBankPath);
+            Dictionary<string, GenBankTranscript> idToTranscript = LoadTranscripts(inputGenBankPath);
             Console.WriteLine($"{idToTranscript.Count} transcripts loaded.");
 
             Console.Write($"- writing transcripts to {Path.GetFileName(outputDataPath)}... ");
@@ -33,18 +33,18 @@ namespace ExtractGenBank
             Console.WriteLine("finished.");
         }
 
-        private static void WriteTranscripts(Dictionary<string, Transcript> idToTranscript, string filePath)
+        private static void WriteTranscripts(Dictionary<string, GenBankTranscript> idToTranscript, string filePath)
         {
             using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
             using var writer = new StreamWriter(new GZipStream(stream, CompressionLevel.Optimal));
 
-            foreach ((_, Transcript transcript) in idToTranscript.OrderBy(x => x.Key))
+            foreach ((_, GenBankTranscript transcript) in idToTranscript.OrderBy(x => x.Key))
             {
                 writer.WriteLine(transcript);
             }
         }
 
-        private static Dictionary<string, Transcript> LoadTranscripts(string filePath)
+        private static Dictionary<string, GenBankTranscript> LoadTranscripts(string filePath)
         {
             using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var reader = new GenBankReader(stream);

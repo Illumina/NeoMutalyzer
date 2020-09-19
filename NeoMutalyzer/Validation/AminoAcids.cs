@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NeoMutalyzer
+namespace NeoMutalyzer.Validation
 {
     public static class AminoAcids
     {

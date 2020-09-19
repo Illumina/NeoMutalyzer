@@ -1,4 +1,5 @@
-﻿using NeoMutalyzer;
+﻿using NeoMutalyzer.Annotated;
+using NeoMutalyzer.Validation;
 using NeoMutalyzerShared;
 using Xunit;
 
