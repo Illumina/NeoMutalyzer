@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NeoMutalyzer
+namespace NeoMutalyzerShared
 {
     public readonly struct Interval : IEquatable<Interval>
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using NeoMutalyzerShared;
 
 namespace NeoMutalyzer
 {

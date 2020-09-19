@@ -1,4 +1,6 @@
-﻿namespace NeoMutalyzer
+﻿using NeoMutalyzerShared;
+
+namespace NeoMutalyzer
 {
     public sealed class AnnotatedTranscript
     {

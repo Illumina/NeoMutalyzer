@@ -1,4 +1,5 @@
 ﻿using NeoMutalyzer;
+using NeoMutalyzerShared;
 using Xunit;
 
 namespace UnitTests
