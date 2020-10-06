@@ -32,7 +32,8 @@ namespace NeoMutalyzer.Validation
                     if (result.HasErrors)
                     {
                         Statistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, true);
-                        result.DumpErrors(variant.VID, transcript.Id, transcript.HgvsCoding, transcript.HgvsProtein);
+                        result.DumpErrors(variant.VID, transcript.Id, transcript.HgvsCoding, transcript.HgvsProtein,
+                            transcript.Json);
                     }
 
                     Statistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, false);

@@ -49,7 +49,8 @@ namespace NeoMutalyzer.Validation
             HasProteinRefAlleleError          = false;
         }
 
-        public void DumpErrors(string vid, string transcriptId, string hgvsCoding, string hgvsProtein)
+        public void DumpErrors(string vid, string transcriptId, string hgvsCoding, string hgvsProtein,
+            string transcriptJson)
         {
             Console.Write($"{vid}\t{transcriptId}\t{hgvsCoding}\t{hgvsProtein}\t");
 
@@ -66,8 +67,7 @@ namespace NeoMutalyzer.Validation
             if (HasInvalidCdsPosition) Console.Write("Invalid CDS position\t");
             if (HasInvalidProteinPosition) Console.Write("Invalid protein position\t");
             if (HasProteinRefAlleleError) Console.Write("Protein RefAllele\t");
-
-            Console.WriteLine();
+            Console.WriteLine(transcriptJson);
         }
     }
 }

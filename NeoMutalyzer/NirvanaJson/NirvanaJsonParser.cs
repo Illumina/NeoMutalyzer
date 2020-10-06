@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Compression;
 using NeoMutalyzer.Annotated;
 using NeoMutalyzerShared;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReferenceSequence;
 
@@ -79,7 +80,7 @@ namespace NeoMutalyzer.NirvanaJson
 
             if (transcripts == null)
                 return new Variant(vid, chromosome, begin, end, refAllele, altAllele, variantType, hgvsGenomic,
-                    annotatedTranscripts.ToArray(), variant.ToString());
+                    annotatedTranscripts.ToArray());
 
             foreach (dynamic transcript in transcripts)
             {
@@ -88,7 +89,7 @@ namespace NeoMutalyzer.NirvanaJson
             }
             
             return new Variant(vid, chromosome, begin, end, refAllele, altAllele, variantType, hgvsGenomic,
-                annotatedTranscripts.ToArray(), variant.ToString());
+                annotatedTranscripts.ToArray());
         }
 
         private static string CreateVid(string chromosomeName, int start, string refAllele, string altAllele)
@@ -144,7 +145,7 @@ namespace NeoMutalyzer.NirvanaJson
             Interval aminoAcidPos = GetIntervalFromRange(aaRange);
 
             return new Transcript(id, refAllele, altAllele, refAminoAcids, altAminoAcids, cdnaPos, cdsPos, aminoAcidPos,
-                hgvsCoding, hgvsProtein);
+                hgvsCoding, hgvsProtein, transcript.ToString(Formatting.None));
         }
 
         private static (string RefAminoAcids, string AltAminoAcids) GetAllelesFromAminoAcids(string aminoAcids)

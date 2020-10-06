@@ -14,20 +14,23 @@ namespace NeoMutalyzer.Annotated
         public readonly Interval AminoAcidPos;
         public readonly string   HgvsCoding;
         public readonly string   HgvsProtein;
+        public readonly string   Json;
 
         public Transcript(string id, string refAllele, string altAllele, string refAminoAcids, string altAminoAcids,
-            Interval cdnaPos, Interval cdsPos, Interval aminoAcidPos, string hgvsCoding, string hgvsProtein)
+            Interval cdnaPos, Interval cdsPos, Interval aminoAcidPos, string hgvsCoding, string hgvsProtein,
+            string json)
         {
-            Id             = id;
-            RefAllele      = refAllele;
-            AltAllele      = altAllele;
-            RefAminoAcids  = refAminoAcids;
-            AltAminoAcids  = altAminoAcids;
-            CdnaPos        = cdnaPos;
-            CdsPos         = cdsPos;
-            AminoAcidPos   = aminoAcidPos;
-            HgvsCoding     = hgvsCoding;
-            HgvsProtein    = hgvsProtein;
+            Id            = id;
+            RefAllele     = refAllele;
+            AltAllele     = altAllele;
+            RefAminoAcids = refAminoAcids;
+            AltAminoAcids = altAminoAcids;
+            CdnaPos       = cdnaPos;
+            CdsPos        = cdsPos;
+            AminoAcidPos  = aminoAcidPos;
+            HgvsCoding    = hgvsCoding;
+            HgvsProtein   = hgvsProtein;
+            Json          = json;
         }
     }
 }
