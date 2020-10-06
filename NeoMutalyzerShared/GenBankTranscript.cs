@@ -1,39 +1,50 @@
 ﻿namespace NeoMutalyzerShared
 {
-    public sealed class GenBankTranscript
+    public sealed class GenBankTranscript : IGenBankTranscript
     {
         public readonly string Id;
-        public readonly string CdnaSequence;
-        public readonly string CdsSequence;
-        public readonly string AminoAcidSequence;
+        public readonly string GeneSymbol;
 
-        public GenBankTranscript(string id, string cdnaSequence, int? cdsStart, int? cdsEnd, string aaSequence)
+        public string   CdnaSequence      { get; }
+        public string   CdsSequence       { get; }
+        public string   AminoAcidSequence { get; }
+        public Interval CodingRegion      { get; }
+
+        public GenBankTranscript(string id, string geneSymbol, string cdnaSequence, string cdsSequence,
+            string aaSequence, Interval codingRegion)
         {
             Id                = id;
-            CdnaSequence      = cdnaSequence;
-            AminoAcidSequence = aaSequence;
-
-            if (cdsStart == null || cdsEnd == null) return;
-
-            int cdsLength = cdsEnd.Value - cdsStart.Value + 1;
-
-            CdsSequence = cdnaSequence.Substring(cdsStart.Value - 1, cdsLength);
-        }
-        
-        public GenBankTranscript(string id, string cdnaSequence, string cdsSequence, string aaSequence)
-        {
-            Id                = id;
+            GeneSymbol        = geneSymbol;
             CdnaSequence      = cdnaSequence;
             CdsSequence       = cdsSequence;
             AminoAcidSequence = aaSequence;
+            CodingRegion      = codingRegion;
         }
 
-        public string GetCdna(in Interval interval) => CdnaSequence.Substring(interval.Start - 1, interval.Length);
-        public string GetCds(in Interval interval)  => CdsSequence.Substring(interval.Start  - 1, interval.Length);
+        public string GetCdna(int start, int end)
+        {
+            if (start < 1 || end > CdnaSequence.Length) return null;
+            return CdnaSequence.Substring(start - 1, Length(start, end));
+        }
 
-        public string GetAminoAcids(in Interval interval) =>
-            AminoAcidSequence.Substring(interval.Start - 1, interval.Length);
+        public string GetCds(int start, int end)
+        {
+            if (CdsSequence == null || start < 1 || end > CdsSequence.Length) return null;
+            return CdsSequence.Substring(start - 1, Length(start, end));
+        }
 
-        public override string ToString() => $"{Id}\t{CdnaSequence}\t{CdsSequence}\t{AminoAcidSequence}";
+        public string GetAminoAcids(int start, int end)
+        {
+            if (AminoAcidSequence == null || start < 1 || end > AminoAcidSequence.Length) return null;
+            return AminoAcidSequence.Substring(start - 1, Length(start, end));
+        }
+
+        private static int Length(int start, int end) => end - start + 1;
+
+        public override string ToString()
+        {
+            string codingRegion = CodingRegion == null ? "\t" : $"{CodingRegion.Start}\t{CodingRegion.End}";
+            return $"{Id}\t{GeneSymbol}\t{CdnaSequence}\t{CdsSequence}\t{AminoAcidSequence}\t{codingRegion}";
+        }
     }
 }

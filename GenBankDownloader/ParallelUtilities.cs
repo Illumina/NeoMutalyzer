@@ -25,7 +25,7 @@ namespace GenBankDownloader
                 {
                     maxThread.Wait(cancellationToken);
 
-                    var file = files[i];
+                    RemoteFile file = files[i];
                     tasks[i] = Task.Factory
                         .StartNew(() => httpAction(file, clientFunc, tokenSource, exceptionMessage), TaskCreationOptions.LongRunning)
                         .ContinueWith(task => maxThread.Release(), cancellationToken);

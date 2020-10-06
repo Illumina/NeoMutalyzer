@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NeoMutalyzerShared;
+﻿using NeoMutalyzerShared;
 
 namespace ExtractGenBank.GenBank
 {
@@ -34,26 +32,5 @@ namespace ExtractGenBank.GenBank
             ProteinId   = proteinId;
             Translation = translation;
         }
-        
-        public override string ToString()
-        {
-            var intervals = new List<string>(Regions.Length);
-            intervals.AddRange(Regions.Select(region => $"{region.Start}-{region.End}"));
-            string regions = string.Join(", ", intervals);
-
-            return
-                $"CDS: {Start}-{End}, symbol: {GeneSymbol}, locus tag: {LocusTag}, gene ID: {_geneId}, regions: {regions}, note: {Note}, codon start: {_codonStart}, product: {Product}, protein ID: {ProteinId}, translation: {Translation.Length} aa";
-        }
-
-        // public Transcript ToTranscript(string bases)
-        // {
-        //     string codingSequence    = Regions.GetBases(bases);
-        //     string aminoAcidSequence = AminoAcids.TranslateBases(codingSequence);
-        //
-        //     TranscriptRegion[] transcriptRegions = TranscriptRegion.Create(Regions);
-        //
-        //     return new Transcript(ProteinId, Start, End, BioType.CDS, codingSequence, aminoAcidSequence,
-        //         transcriptRegions);
-        // }
     }
 }

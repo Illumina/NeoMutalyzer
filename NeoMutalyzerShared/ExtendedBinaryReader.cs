@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace ReferenceSequence
+namespace NeoMutalyzerShared
 {
 	public sealed class ExtendedBinaryReader : BinaryReader
 	{
@@ -11,8 +11,7 @@ namespace ReferenceSequence
 		public ExtendedBinaryReader(Stream input, Encoding encoding, bool leaveOpen = false)
 			: base(input, encoding, leaveOpen) {}
 
-
-	    /// <summary>
+		/// <summary>
 	    /// returns an unsigned short from the binary reader
 	    /// </summary>
 	    public ushort ReadOptUInt16()
@@ -52,37 +51,7 @@ namespace ReferenceSequence
 			throw new FormatException("Unable to read the 7-bit encoded integer");
 		}
 
-		/// <summary>
-		/// returns a long from the binary reader
-		/// </summary>
-		public long ReadOptInt64()
-		{
-			long count = 0;
-			var shift = 0;
-
-			while (shift != 70)
-			{
-				byte b = ReadByte();
-				count |= (long)(b & sbyte.MaxValue) << shift;
-				shift += 7;
-
-				if ((b & 128) == 0) return count;
-			}
-
-			throw new FormatException("Unable to read the 7-bit encoded long");
-		}
-
-		public T[] ReadOptArray<T>(Func<T> readOptFunc)
-		{
-			int count = ReadOptInt32();
-			if (count == 0) return null;
-
-			var values = new T[count];
-			for (var i = 0; i < count; i++) values[i] = readOptFunc();
-			return values;
-		}
-
-		/// <summary>
+        /// <summary>
 		/// returns an ASCII string from the binary reader
 		/// </summary>
 		public string ReadAsciiString()

@@ -29,6 +29,7 @@ namespace ExtractGenBank.GenBank
         private const string MiscFeatureFeatureTag    = "misc_feature";
         private const string MiscRnaFeatureTag        = "misc_RNA";
         private const string MiscStructureTag         = "misc_structure";
+        private const string ModifiedBaseTag          = "modified_base";
         private const string NcRnaFeatureTag          = "ncRNA";
         private const string PolyASiteFeatureTag      = "polyA_site";
         private const string PrecursorRnaFeatureTag   = "precursor_RNA";
@@ -62,7 +63,7 @@ namespace ExtractGenBank.GenBank
             {
                 GenBankTranscript genBankTranscript = ParseTranscript();
                 if (genBankTranscript == null) break;
-
+                
                 idToTranscript[genBankTranscript.Id] = genBankTranscript;
             }
 
@@ -74,7 +75,8 @@ namespace ExtractGenBank.GenBank
             string         id  = GetVersion();
             if (id == null) return null;
             
-            CodingSequence cds = null;
+            CodingSequence cds  = null;
+            Gene           gene = null;
 
             FindFeatures();
 
@@ -82,13 +84,32 @@ namespace ExtractGenBank.GenBank
             {
                 IFeature feature = GetNextFeature();
 
-                var codingSequence = feature as CodingSequence;
-                if (codingSequence == null) continue;
-                cds = codingSequence;
+                switch (feature)
+                {
+                    case CodingSequence cdsFeature:
+                        cds = cdsFeature;
+                        break;
+                    case Gene geneFeature:
+                        gene = geneFeature;
+                        break;
+                }
             }
 
+            if (gene == null) throw new InvalidDataException($"Unable to find the gene feature for {id}");
+
             string cdnaSequence = ParseSequence();
-            return new GenBankTranscript(id, cdnaSequence, cds?.Start, cds?.End, cds?.Translation);
+
+            string   cdsSequence  = null;
+            Interval codingRegion = null;
+            
+            if (cds != null)
+            {
+                codingRegion = new Interval(cds.Start, cds.End);
+                cdsSequence  = cdnaSequence.Substring(codingRegion.Start - 1, codingRegion.Length);
+            }
+
+            return new GenBankTranscript(id, gene.GeneSymbol, cdnaSequence, cdsSequence, cds?.Translation,
+                codingRegion);
         }
 
         private void FindFeatures()
@@ -142,7 +163,7 @@ namespace ExtractGenBank.GenBank
                 CdsFeatureTag            => GetCds(),
                 CRegionFeatureTag        => SkipFeature(),
                 ExonFeatureTag           => SkipFeature(),
-                GeneFeatureTag           => SkipFeature(),
+                GeneFeatureTag           => GetGene(),
                 JSegmentFeatureTag       => SkipFeature(),
                 MatPeptideFeatureTag     => SkipFeature(),
                 MiscBindingFeatureTag    => SkipFeature(),
@@ -150,6 +171,7 @@ namespace ExtractGenBank.GenBank
                 MiscFeatureFeatureTag    => SkipFeature(),
                 MiscRnaFeatureTag        => SkipFeature(),
                 MiscStructureTag         => SkipFeature(),
+                ModifiedBaseTag          => SkipFeature(),
                 NcRnaFeatureTag          => SkipFeature(),
                 PolyASiteFeatureTag      => SkipFeature(),
                 PrecursorRnaFeatureTag   => SkipFeature(),
@@ -179,10 +201,14 @@ namespace ExtractGenBank.GenBank
         private IFeature GetCds()
         {
             GenBankData data = _parser.GetFeature();
-            var cds = new CodingSequence(data.Interval, data.GeneSymbol, data.LocusTag, data.GeneId, data.Regions,
+            return new CodingSequence(data.Interval, data.GeneSymbol, data.LocusTag, data.GeneId, data.Regions,
                 data.Note, data.CodonStart, data.Product, data.ProteinId, data.Translation + '*');
-            // _currentCds = cds;
-            return cds;
+        }
+
+        private IFeature GetGene()
+        {
+            GenBankData data = _parser.GetFeature();
+            return new Gene(data.Interval, data.GeneSymbol);
         }
 
         public void Dispose() => _readerData.Dispose();

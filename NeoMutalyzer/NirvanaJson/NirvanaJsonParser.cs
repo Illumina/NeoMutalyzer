@@ -46,8 +46,6 @@ namespace NeoMutalyzer.NirvanaJson
             string chromosome = position.chromosome;
             int    pos        = position.position;
             
-            Console.WriteLine($"- parsing {chromosome}:{pos}");
-            
             dynamic variants = position.variants;
             
             var annotatedVariants = new List<Variant>();
@@ -58,7 +56,7 @@ namespace NeoMutalyzer.NirvanaJson
                 annotatedVariants.Add(annotatedVariant);
             }
             
-            return new Position(annotatedVariants.ToArray());
+            return new Position(chromosome, pos, annotatedVariants.ToArray());
         }
 
         private Variant ParseVariant(dynamic variant)
@@ -72,24 +70,42 @@ namespace NeoMutalyzer.NirvanaJson
             string hgvsGenomic = variant.hgvsg;
             
             Chromosome  chromosome  = ReferenceNameUtilities.GetChromosome(_refNameToChromosome, chr);
+            string      vid         = CreateVid(chromosome.EnsemblName, begin, refAllele, altAllele);
             VariantType variantType = GetVariantType(vType);
 
             dynamic transcripts = variant.transcripts;
-
+            
             var annotatedTranscripts = new List<Transcript>();
 
             if (transcripts == null)
-                return new Variant(chromosome, begin, end, refAllele, altAllele, variantType, hgvsGenomic,
-                    annotatedTranscripts.ToArray());
+                return new Variant(vid, chromosome, begin, end, refAllele, altAllele, variantType, hgvsGenomic,
+                    annotatedTranscripts.ToArray(), variant.ToString());
 
             foreach (dynamic transcript in transcripts)
             {
                 Transcript annotatedTranscript = ParseTranscript(transcript);
                 if (annotatedTranscript != null) annotatedTranscripts.Add(annotatedTranscript);
             }
+            
+            return new Variant(vid, chromosome, begin, end, refAllele, altAllele, variantType, hgvsGenomic,
+                annotatedTranscripts.ToArray(), variant.ToString());
+        }
 
-            return new Variant(chromosome, begin, end, refAllele, altAllele, variantType, hgvsGenomic,
-                annotatedTranscripts.ToArray());
+        private static string CreateVid(string chromosomeName, int start, string refAllele, string altAllele)
+        {
+            refAllele = RemoveHyphen(refAllele);
+            altAllele = RemoveHyphen(altAllele);
+            
+            // add padding bases
+            if (string.IsNullOrEmpty(refAllele) || string.IsNullOrEmpty(altAllele))
+            {
+                start--;
+                const string paddingBase = "N";
+                refAllele = paddingBase + refAllele;
+                altAllele = paddingBase + altAllele;
+            }
+
+            return chromosomeName + '-' + start + '-' + refAllele + '-' + altAllele;
         }
 
         private static VariantType GetVariantType(string variantType)
@@ -131,14 +147,19 @@ namespace NeoMutalyzer.NirvanaJson
                 hgvsCoding, hgvsProtein);
         }
 
-        private (string RefAminoAcids, string AltAminoAcids) GetAllelesFromAminoAcids(string aminoAcids)
+        private static (string RefAminoAcids, string AltAminoAcids) GetAllelesFromAminoAcids(string aminoAcids)
         {
             if (aminoAcids == null) return (null, null);
-            
+
             // VL/X
-            string[] cols = aminoAcids.Split('/');
-            return cols.Length == 1 ? (cols[0], cols[0]) : (cols[0], cols[1]);
+            string[] cols          = aminoAcids.Split('/');
+            string   refAminoAcids = RemoveHyphen(cols[0]);
+            string   altAminoAcids = cols.Length == 1 ? refAminoAcids : RemoveHyphen(cols[1]);
+
+            return (refAminoAcids, altAminoAcids);
         }
+
+        private static string RemoveHyphen(string aminoAcids) => aminoAcids == "-" ? null : aminoAcids;
 
         private (string RefAllele, string AltAllele) GetAllelesFromCodons(string codons)
         {

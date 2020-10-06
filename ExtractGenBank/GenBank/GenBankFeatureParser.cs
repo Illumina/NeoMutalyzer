@@ -33,6 +33,7 @@ namespace ExtractGenBank.GenBank
         private const  string IsolateKey           = "isolate";
         private const  string LocusTagKey          = "locus_tag";
         private const  string MapKey               = "map";
+        private const  string ModBaseKey           = "mod_base";
         private const  string MoleculeTypeKey      = "mol_type";
         private const  string NcRnaClassKey        = "ncRNA_class";
         private const  string NoteKey              = "note";
@@ -85,6 +86,7 @@ namespace ExtractGenBank.GenBank
                     case GoProcessKey:
                     case InferenceKey:
                     case MapKey:
+                    case ModBaseKey:
                     case NcRnaClassKey:
                     case PhenotypeKey:
                     case PseudoKey:

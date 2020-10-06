@@ -31,7 +31,7 @@ namespace GenBankDownloader
                 _httpClient.GetAsync(file.RemotePath, HttpCompletionOption.ResponseHeadersRead).Result;
 
             Console.WriteLine($"  - thread {Thread.CurrentThread.ManagedThreadId}, status code: {response.StatusCode}");
-            if (response.StatusCode == HttpStatusCode.TooManyRequests) Thread.Sleep(3_000);
+            if (response.StatusCode == HttpStatusCode.TooManyRequests) Thread.Sleep(5_000);
             if (!response.IsSuccessStatusCode) return false;
 
             Console.WriteLine($"  - downloading {file.Description}");
@@ -41,6 +41,8 @@ namespace GenBankDownloader
 
             using FileStream fileStream = fileInfo.OpenWrite();
             stream.CopyTo(fileStream);
+            
+            Thread.Sleep(5_000);
 
             return true;
         }

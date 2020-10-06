@@ -3,7 +3,7 @@ using NeoMutalyzer.Validation;
 using NeoMutalyzerShared;
 using Xunit;
 
-namespace UnitTests
+namespace UnitTests.Validation
 {
     public sealed class VariantRotatorTests
     {

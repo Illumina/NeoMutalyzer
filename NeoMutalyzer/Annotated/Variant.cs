@@ -4,6 +4,7 @@ namespace NeoMutalyzer.Annotated
 {
     public sealed class Variant
     {
+        public readonly string       VID;
         public readonly Chromosome   Chromosome;
         public readonly int          Begin;
         public readonly int          End;
@@ -12,10 +13,12 @@ namespace NeoMutalyzer.Annotated
         public readonly VariantType  Type;
         public readonly string       HgvsGenomic;
         public readonly Transcript[] Transcripts;
+        public readonly string       VariantJson;
 
-        public Variant(Chromosome chromosome, int begin, int end, string refAllele, string altAllele, VariantType type,
-            string hgvsGenomic, Transcript[] transcripts)
+        public Variant(string vid, Chromosome chromosome, int begin, int end, string refAllele, string altAllele, VariantType type,
+            string hgvsGenomic, Transcript[] transcripts, string variantJson)
         {
+            VID         = vid;
             Chromosome  = chromosome;
             Begin       = begin;
             End         = end;
@@ -24,6 +27,7 @@ namespace NeoMutalyzer.Annotated
             Type        = type;
             HgvsGenomic = hgvsGenomic;
             Transcripts = transcripts;
+            VariantJson = variantJson;
         }
     }
 }

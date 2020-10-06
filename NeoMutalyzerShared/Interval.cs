@@ -2,7 +2,7 @@
 
 namespace NeoMutalyzerShared
 {
-    public sealed class Interval : IEquatable<Interval>
+    public class Interval : IEquatable<Interval>
     {
         public readonly int Start;
         public readonly int End;
@@ -29,5 +29,7 @@ namespace NeoMutalyzerShared
                 return (Start * 397) ^ End;
             }
         }
+
+        public override string ToString() => Start == End ? Start.ToString() : $"{Start}-{End}";
     }
 }

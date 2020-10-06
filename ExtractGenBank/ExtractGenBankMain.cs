@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using ExtractGenBank.GenBank;
 using NeoMutalyzerShared;
@@ -35,8 +34,7 @@ namespace ExtractGenBank
 
         private static void WriteTranscripts(Dictionary<string, GenBankTranscript> idToTranscript, string filePath)
         {
-            using var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-            using var writer = new StreamWriter(new GZipStream(stream, CompressionLevel.Optimal));
+            using StreamWriter writer = FileUtilities.GzipWriter(filePath);
 
             foreach ((_, GenBankTranscript transcript) in idToTranscript.OrderBy(x => x.Key))
             {
@@ -46,8 +44,7 @@ namespace ExtractGenBank
 
         private static Dictionary<string, GenBankTranscript> LoadTranscripts(string filePath)
         {
-            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using var reader = new GenBankReader(stream);
+            using var reader = new GenBankReader(FileUtilities.GetReadStream(filePath));
             return reader.GetIdToTranscript();
         }
     }

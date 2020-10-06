@@ -9,7 +9,10 @@ namespace NeoMutalyzer.Validation
         public static (Interval ShiftedPosition, string ShiftedRef, string ShiftedAlt, bool HasShifted) Right(
             Interval pos, string refAllele, string altAllele, VariantType variantType, string refSequence)
         {
-            if (variantType != VariantType.deletion && variantType != VariantType.insertion)
+            bool bothAllelesNull = refAllele   == null                 && altAllele   == null;
+            bool notInsOrDel     = variantType != VariantType.deletion && variantType != VariantType.insertion;
+
+            if (refSequence == null || pos == null || bothAllelesNull || notInsOrDel)
                 return (pos, refAllele, altAllele, false);
 
             ReadOnlySpan<char> refSpan = refSequence.AsSpan();
@@ -61,8 +64,8 @@ namespace NeoMutalyzer.Validation
         }
 
         private static ReadOnlySpan<char> GetDownstreamBases(Interval pos, ReadOnlySpan<char> refSpan) =>
-            refSpan.Slice(pos.End, refSpan.Length - pos.End);
-
+            pos.End >= refSpan.Length ? ReadOnlySpan<char>.Empty : refSpan.Slice(pos.End, refSpan.Length - pos.End);
+        
         private static string GetRotatingBases(string refAllele, string altAllele, VariantType variantType) =>
             variantType == VariantType.insertion ? altAllele : refAllele;
     }

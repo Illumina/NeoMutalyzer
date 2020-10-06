@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using NeoMutalyzerShared;
 
 namespace GenBankDownloader
 {
@@ -64,8 +65,7 @@ namespace GenBankDownloader
 
         private static Queue<string> GetRefSeqIds(string filePath)
         {
-            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using var reader = new StreamReader(stream);
+            using StreamReader reader = FileUtilities.StreamReader(filePath);
 
             var refSeqIds = new Queue<string>();
 

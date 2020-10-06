@@ -1,4 +1,6 @@
-﻿namespace ReferenceSequence
+﻿using NeoMutalyzerShared;
+
+namespace ReferenceSequence
 {
     public sealed class Chromosome
     {

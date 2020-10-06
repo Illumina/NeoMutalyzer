@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using NeoMutalyzerShared;
 
 namespace ReferenceSequence
 {
@@ -10,8 +11,7 @@ namespace ReferenceSequence
 
         public static void Load(string filePath)
         {
-            using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            using var reader = new ExtendedBinaryReader(stream);
+            using var reader = FileUtilities.ExtendedBinaryReader(filePath);
 
             CheckHeaderVersion(reader);
 
