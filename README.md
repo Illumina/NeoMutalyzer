@@ -1,5 +1,12 @@
 # NeoMutalyzer
 
+NeoMutalyzer is a testing tool that validates transcript mapping in Nirvana JSON files. Specifically it checks the following:
+* cDNA position
+* CDS position
+* AA position
+* HGVS c. notation
+* HGVS p. notation
+
 ```
 >dotnet NeoMutalyzer.dll Cache26_transcripts.tsv.gz Homo_sapiens.GRCh37.Nirvana.dat CosmicCodingMuts.json.gz
 - loading reference sequences... 390 loaded.
@@ -26,6 +33,8 @@ Genes:               bad: 1,623 / 22,577 (7.189%)
   - current RAM:  7.285 GB
   - peak RAM:     7.285 GB
 ```
+
+NeoMutalyzer outputs a number of error categories:
 
 | Category                 | Description                                                                                    | 
 |--------------------------|------------------------------------------------------------------------------------------------| 
