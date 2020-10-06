@@ -26,3 +26,19 @@ Genes:               bad: 1,623 / 22,577 (7.189%)
   - current RAM:  7.285 GB
   - peak RAM:     7.285 GB
 ```
+
+| Category                 | Description                                                                                    | 
+|--------------------------|------------------------------------------------------------------------------------------------| 
+| HGVS c. RefAllele        | The reference bases in the HGVS notation don't match the transcript bases at the HGVS position | 
+| HGVS c. Position         | The right aligned CDS coordinate doesn't match the position in the HGVS notation               | 
+| HGVS c. CDS range        | The HGVS notation indicates that the coordinate is both before the coding region and after it  | 
+| HGVS p. RefAllele        | The reference AA in the HGVS notation don't match the AAs at the HGVS position                 | 
+| HGVS p. Unknown          | One of the ref AAs uses an unknown amino acid abbreviation (usually _?_)                       | 
+| HGVS p. Position         | (not used at the moment)                                                                       | 
+| HGVS p. AltAllele        | "This HGVS seems to be from our ""unknown"" output template."                                  | 
+| cDNA RefAllele           | The reference bases in codons don't match the cDNA bases found at cdnaPos                      | 
+| CDS RefAllele            | The reference bases in codons don't match the CDS bases found at cdsPos                        | 
+| Invalid cDNA position    | "cDNA position beyond the bounds of the cDNA sequence [1, length]"                             | 
+| Invalid CDS position     | "CDS position beyond the bounds of the CDS sequence [1, length]"                               | 
+| Invalid protein position | "AA position beyond the bounds of the AA sequence [1, length]"                                 | 
+| Protein RefAllele        | The reference AAs in aminoAcids don't match the AAs found at proteinPos                        | 
