@@ -33,7 +33,7 @@ Genes:               bad: 1,623 / 22,577 (7.189%)
 | HGVS c. Position         | The right aligned CDS coordinate doesn't match the position in the HGVS notation               | 
 | HGVS c. CDS range        | The HGVS notation indicates that the coordinate is both before the coding region and after it  | 
 | HGVS p. RefAllele        | The reference AA in the HGVS notation don't match the AAs at the HGVS position                 | 
-| HGVS p. Unknown          | One of the ref AAs uses an unknown amino acid abbreviation (usually _?_)                       | 
+| HGVS p. Unknown          | One of the ref AAs uses an unknown amino acid abbreviation (usually \_?\_)                     | 
 | HGVS p. Position         | (not used at the moment)                                                                       | 
 | HGVS p. AltAllele        | This HGVS seems to be from our ""unknown"" output template.                                    | 
 | cDNA RefAllele           | The reference bases in codons don't match the cDNA bases found at cdnaPos                      | 
