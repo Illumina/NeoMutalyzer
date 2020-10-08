@@ -8,10 +8,7 @@ namespace ReferenceSequence
         public static Chromosome GetChromosome(Dictionary<string, Chromosome> refNameToChromosome,
             string referenceName)
         {
-            if (!refNameToChromosome.TryGetValue(referenceName, out Chromosome chromosome))
-                throw new InvalidDataException($"Could not find the following chromosome: {referenceName}");
-            
-            return chromosome;
+            return !refNameToChromosome.TryGetValue(referenceName, out Chromosome chromosome) ? null : chromosome;
         }
 
         public static Chromosome GetChromosome(Dictionary<ushort, Chromosome> refIndexToChromosome,

@@ -52,8 +52,10 @@ namespace ReferenceSequence
 
         private static void AddReferenceName(Chromosome chromosome)
         {
-            if (!string.IsNullOrEmpty(chromosome.UcscName)) RefNameToChromosome[chromosome.UcscName]       = chromosome;
-            if (!string.IsNullOrEmpty(chromosome.EnsemblName)) RefNameToChromosome[chromosome.EnsemblName] = chromosome;
+            if (!string.IsNullOrEmpty(chromosome.UcscName))         RefNameToChromosome[chromosome.UcscName]         = chromosome;
+            if (!string.IsNullOrEmpty(chromosome.EnsemblName))      RefNameToChromosome[chromosome.EnsemblName]      = chromosome;
+            if (!string.IsNullOrEmpty(chromosome.RefSeqAccession))  RefNameToChromosome[chromosome.RefSeqAccession]  = chromosome;
+            if (!string.IsNullOrEmpty(chromosome.GenBankAccession)) RefNameToChromosome[chromosome.GenBankAccession] = chromosome;
             RefIndexToChromosome[chromosome.Index] = chromosome;
         }
     }

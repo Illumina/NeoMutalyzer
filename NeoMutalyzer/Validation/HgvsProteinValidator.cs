@@ -10,11 +10,6 @@ namespace NeoMutalyzer.Validation
         {
             if (hgvsProtein == null) return;
 
-            // if (hgvsProtein == "NP_008964.3:p.(Ter197LysextTer4)")
-            // {
-            //     Console.WriteLine("BOB");
-            // }
-
             ProteinInterval interval = HgvsProteinParser.Parse(hgvsProtein);
 
             // evaluate each position independently. For the most part, HGVS p. lists the first and last ref AA
