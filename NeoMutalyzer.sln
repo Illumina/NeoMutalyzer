@@ -14,7 +14,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compression", "Compression\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReferenceSequence", "ReferenceSequence\ReferenceSequence.csproj", "{93611799-4465-48C8-A88C-BD00DF433953}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranscriptTimeMachine", "TranscriptTimeMachine\TranscriptTimeMachine.csproj", "{0FDC5656-F820-4331-985A-E10A9B226C1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractTranscriptsFromGffSnapshots", "ExtractTranscriptsFromGffSnapshots\ExtractTranscriptsFromGffSnapshots.csproj", "{0FDC5656-F820-4331-985A-E10A9B226C1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GffDownloader", "GffDownloader\GffDownloader.csproj", "{54ABA09E-BD1F-4E12-ABAB-0B1EFA8EE0E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Downloader", "Downloader\Downloader.csproj", "{BCACB2AD-366C-442A-84A6-6C13DD9E1DAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefSeq", "RefSeq\RefSeq.csproj", "{128F12AB-DD52-4F0D-8806-E017BD1A07F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,5 +60,17 @@ Global
 		{0FDC5656-F820-4331-985A-E10A9B226C1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FDC5656-F820-4331-985A-E10A9B226C1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FDC5656-F820-4331-985A-E10A9B226C1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54ABA09E-BD1F-4E12-ABAB-0B1EFA8EE0E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54ABA09E-BD1F-4E12-ABAB-0B1EFA8EE0E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54ABA09E-BD1F-4E12-ABAB-0B1EFA8EE0E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54ABA09E-BD1F-4E12-ABAB-0B1EFA8EE0E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCACB2AD-366C-442A-84A6-6C13DD9E1DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCACB2AD-366C-442A-84A6-6C13DD9E1DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCACB2AD-366C-442A-84A6-6C13DD9E1DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCACB2AD-366C-442A-84A6-6C13DD9E1DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{128F12AB-DD52-4F0D-8806-E017BD1A07F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{128F12AB-DD52-4F0D-8806-E017BD1A07F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{128F12AB-DD52-4F0D-8806-E017BD1A07F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{128F12AB-DD52-4F0D-8806-E017BD1A07F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

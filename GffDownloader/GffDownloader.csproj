@@ -6,6 +6,5 @@
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\Downloader\Downloader.csproj" />
-      <ProjectReference Include="..\NeoMutalyzerShared\NeoMutalyzerShared.csproj" />
     </ItemGroup>
 </Project>

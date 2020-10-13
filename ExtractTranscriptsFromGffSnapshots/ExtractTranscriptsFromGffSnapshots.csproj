@@ -5,7 +5,8 @@
         <OutputPath>..\bin\$(Configuration)</OutputPath>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Downloader\Downloader.csproj" />
       <ProjectReference Include="..\NeoMutalyzerShared\NeoMutalyzerShared.csproj" />
+      <ProjectReference Include="..\ReferenceSequence\ReferenceSequence.csproj" />
+      <ProjectReference Include="..\RefSeq\RefSeq.csproj" />
     </ItemGroup>
 </Project>

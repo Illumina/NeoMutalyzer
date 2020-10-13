@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace GenBankDownloader
+namespace Downloader
 {
-    public static class GenBankDirectory
+    public static class OutputDirectory
     {
         public static void DownloadFiles(IClient client, List<RemoteFile> files) =>
             files.ParallelExecute(client.DownloadFile, Retry, "finished", "download the file");

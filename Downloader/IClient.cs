@@ -1,4 +1,4 @@
-﻿namespace GenBankDownloader
+﻿namespace Downloader
 {
     public interface IClient
     {

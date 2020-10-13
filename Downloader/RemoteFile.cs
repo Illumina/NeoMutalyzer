@@ -1,4 +1,4 @@
-﻿namespace GenBankDownloader
+﻿namespace Downloader
 {
     public sealed class RemoteFile
     {

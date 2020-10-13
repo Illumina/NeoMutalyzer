@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using Downloader;
 
-namespace GenBankDownloader
+namespace GffDownloader
 {
-    internal static class GenBankDownloaderMain
+    internal static class GffDownloaderMain
     {
         private static void Main(string[] args)
         {
@@ -20,12 +20,12 @@ namespace GenBankDownloader
             string outputDir         = args[1];
 
             List<RemoteFile> filesToDownload = GetFilesToDownload(inputRefSeqIdPath, outputDir);
-            DownloadGenBankEntries(filesToDownload);
+            DownloadGffEntries(filesToDownload);
         }
 
-        private static void DownloadGenBankEntries(List<RemoteFile> filesToDownload)
+        private static void DownloadGffEntries(List<RemoteFile> filesToDownload)
         {
-            var client = new Client("eutils.ncbi.nlm.nih.gov");
+            var client = new Client("www.ncbi.nlm.nih.gov");
             OutputDirectory.DownloadFiles(client, filesToDownload);
         }
 
@@ -37,11 +37,11 @@ namespace GenBankDownloader
             var batchRefSeqIds  = new List<string>(numIdsPerFile);
             var filesToDownload = new List<RemoteFile>();
             var batch           = 1;
-            
+
             while (refSeqIds.Count > 0)
             {
                 batchRefSeqIds.Clear();
-                
+
                 for (var i = 0; i < numIdsPerFile; i++)
                 {
                     if (refSeqIds.Count == 0) break;
@@ -50,11 +50,11 @@ namespace GenBankDownloader
                 }
 
                 string batchIds = string.Join(',', batchRefSeqIds);
-                var    fileName = $"batch_{batch:000}.gb";
+                var    fileName = $"batch_{batch:000}.gff3";
                 batch++;
 
                 string localPath  = Path.Combine(outputDir, fileName);
-                var    remotePath = $"/entrez/eutils/efetch.fcgi?db=nuccore&id={batchIds}&rettype=gb&retmode=text";
+                var    remotePath = $"/sviewer/viewer.cgi?db=nuccore&report=gff3&id={batchIds}";
 
                 var file = new RemoteFile(remotePath, localPath, fileName);
                 filesToDownload.Add(file);

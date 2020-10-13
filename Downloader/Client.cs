@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 
-namespace GenBankDownloader
+namespace Downloader
 {
     public sealed class Client : IClient
     {
