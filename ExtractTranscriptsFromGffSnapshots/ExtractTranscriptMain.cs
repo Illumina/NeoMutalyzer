@@ -10,7 +10,7 @@ using RefSeq;
 
 namespace ExtractTranscriptsFromGffSnapshots
 {
-    internal static class TranscriptTimeMachineMain
+    internal static class ExtractTranscriptMain
     {
         private static void Main(string[] args)
         {
@@ -26,7 +26,7 @@ namespace ExtractTranscriptsFromGffSnapshots
             string rootSearchPath = args[2];
             string outputPath     = args[3];
             
-            if (!outputPath.EndsWith(".gz")) outputPath += ".gz";
+            // if (!outputPath.EndsWith(".gz")) outputPath += ".gz";
             
             Console.Write("- loading reference sequences... ");
             ReferenceNameReader.Load(referencePath);
@@ -56,7 +56,7 @@ namespace ExtractTranscriptsFromGffSnapshots
                 Formatting        = Formatting.Indented
             };
 
-            using StreamWriter writer = FileUtilities.GzipWriter(filePath);
+            using StreamWriter writer = FileUtilities.StreamWriter(filePath);
             serializer.Serialize(writer,
                 transcripts.OrderBy(x => x.chromosome.Index).ThenBy(x => x.start).ThenBy(x => x.end));
         }
@@ -89,8 +89,8 @@ namespace ExtractTranscriptsFromGffSnapshots
             bool onReverseStrand = geneModel.Exons[0].onReverseStrand;
             var  numExons        = (ushort) geneModel.Exons.Count;
 
-            return new RefSeq.Transcript(geneModel.TranscriptId, geneModel.Chromosome, start, end, onReverseStrand, numExons,
-                transcriptRegions);
+            return new RefSeq.Transcript(geneModel.TranscriptId, geneModel.Chromosome, start, end, onReverseStrand,
+                numExons, transcriptRegions);
         }
 
         private static TranscriptRegion[] GetTranscriptRegions(List<Exon> exons)

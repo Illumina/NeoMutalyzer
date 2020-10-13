@@ -45,7 +45,7 @@ namespace ExtractTranscriptsFromGffSnapshots
 
             var numExonsAdded       = 0;
             var numTranscriptsAdded = 0;
-            
+
             while (true)
             {
                 string line = reader.ReadLine();
@@ -85,24 +85,25 @@ namespace ExtractTranscriptsFromGffSnapshots
                     idToTranscript[transcriptId] = transcript;
                 }
 
+                bool needGffEntry = !transcript.GffPathToFile.TryGetValue(filePath, out GffFile gffFile);
+
                 // if we already have information from another GFF, skip this entry
-                if (transcript.GffPathToFile.Count > 0 && onlyAddEmpty) continue;
-                
-                // create new GFF file entry
-                if (!transcript.GffPathToFile.TryGetValue(filePath, out GffFile gffFile))
+                if (needGffEntry && transcript.GffPathToFile.Count > 0 && onlyAddEmpty) continue;
+
+                if (needGffEntry)
                 {
                     gffFile                            = new GffFile();
                     transcript.GffPathToFile[filePath] = gffFile;
                     numTranscriptsAdded++;
                 }
-                
+
                 // create new UUID entry
                 if (!gffFile.UuidToGeneModel.TryGetValue(gffId, out GeneModel geneModel))
                 {
                     geneModel                      = new GeneModel(chromosome, transcriptId);
                     gffFile.UuidToGeneModel[gffId] = geneModel;
                 }
-                
+
                 // add the exon
                 geneModel.Exons.Add(new Exon(start, end, cdnaStart, cdnaEnd, onReverseStrand));
                 numExonsAdded++;
