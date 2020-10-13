@@ -1,4 +1,4 @@
-﻿using NeoMutalyzer.HgvsParsing;
+﻿using NeoMutalyzerShared.HgvsParsing;
 using Xunit;
 
 namespace UnitTests.HgvsParsing

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ExtractGenBank.GenBank;
-using NeoMutalyzerShared;
+using IO;
+using NeoMutalyzerShared.GenBank;
 
 namespace ExtractGenBank
 {

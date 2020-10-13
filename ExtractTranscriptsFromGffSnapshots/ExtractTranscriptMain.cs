@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ExtractTranscriptsFromGffSnapshots.GFF;
-using NeoMutalyzerShared;
+using IO;
 using Newtonsoft.Json;
 using ReferenceSequence;
 using RefSeq;

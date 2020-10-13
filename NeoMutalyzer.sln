@@ -22,6 +22,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Downloader", "Downloader\Do
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefSeq", "RefSeq\RefSeq.csproj", "{128F12AB-DD52-4F0D-8806-E017BD1A07F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeoMutalyzerGeneFilter", "NeoMutalyzerGeneFilter\NeoMutalyzerGeneFilter.csproj", "{097539F9-6A7F-4E0A-9BB5-44D5642CB4DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO", "IO\IO.csproj", "{CCA1DA8B-CACE-4886-B13C-3A90CA32DE04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +76,13 @@ Global
 		{128F12AB-DD52-4F0D-8806-E017BD1A07F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{128F12AB-DD52-4F0D-8806-E017BD1A07F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{128F12AB-DD52-4F0D-8806-E017BD1A07F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{097539F9-6A7F-4E0A-9BB5-44D5642CB4DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{097539F9-6A7F-4E0A-9BB5-44D5642CB4DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{097539F9-6A7F-4E0A-9BB5-44D5642CB4DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{097539F9-6A7F-4E0A-9BB5-44D5642CB4DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCA1DA8B-CACE-4886-B13C-3A90CA32DE04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCA1DA8B-CACE-4886-B13C-3A90CA32DE04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCA1DA8B-CACE-4886-B13C-3A90CA32DE04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCA1DA8B-CACE-4886-B13C-3A90CA32DE04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

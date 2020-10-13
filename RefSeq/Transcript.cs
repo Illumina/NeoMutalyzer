@@ -57,5 +57,18 @@ namespace RefSeq
             this.numExons          = numExons;
             this.transcriptRegions = transcriptRegions;
         }
+        
+        // genome GFF3
+        // public string       proteinId;
+        // public CodingRegion codingRegion;
+        
+        // genome GenBank
+        // public byte               startExonPhase;
+        
+        // transcript GenBank
+        // public string cdnaSequence;
+        // public string cdsSequence;
+        // public string aaSeqence;
+        // public string geneSymbol;
     }
 }

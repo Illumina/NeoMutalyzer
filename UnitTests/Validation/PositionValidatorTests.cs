@@ -1,5 +1,6 @@
-﻿using NeoMutalyzer.Validation;
-using NeoMutalyzerShared;
+﻿using NeoMutalyzerShared;
+using NeoMutalyzerShared.GenBank;
+using NeoMutalyzerShared.Validation;
 using Xunit;
 
 namespace UnitTests.Validation

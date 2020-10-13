@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using ExtractTranscriptsFromGffSnapshots.GFF;
-using NeoMutalyzerShared;
+using IO;
 using ReferenceSequence;
 
 namespace ExtractTranscriptsFromGffSnapshots

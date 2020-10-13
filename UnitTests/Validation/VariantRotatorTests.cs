@@ -1,6 +1,6 @@
-﻿using NeoMutalyzer.Annotated;
-using NeoMutalyzer.Validation;
-using NeoMutalyzerShared;
+﻿using NeoMutalyzerShared;
+using NeoMutalyzerShared.Annotated;
+using NeoMutalyzerShared.Validation;
 using Xunit;
 
 namespace UnitTests.Validation

@@ -1,4 +1,4 @@
-﻿using NeoMutalyzerShared;
+﻿using IO;
 
 namespace ReferenceSequence
 {

@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using NeoMutalyzerShared;
+using NeoMutalyzerShared.GenBank;
 
 namespace ExtractGenBank.GenBank
 {

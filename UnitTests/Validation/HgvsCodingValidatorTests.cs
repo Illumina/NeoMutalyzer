@@ -1,7 +1,8 @@
 ﻿using Moq;
-using NeoMutalyzer.Annotated;
-using NeoMutalyzer.Validation;
 using NeoMutalyzerShared;
+using NeoMutalyzerShared.Annotated;
+using NeoMutalyzerShared.GenBank;
+using NeoMutalyzerShared.Validation;
 using Xunit;
 
 namespace UnitTests.Validation

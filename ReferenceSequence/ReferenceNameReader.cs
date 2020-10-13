@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using NeoMutalyzerShared;
+using IO;
 
 namespace ReferenceSequence
 {
