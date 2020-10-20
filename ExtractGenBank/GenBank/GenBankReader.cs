@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using NeoMutalyzerShared;
-using NeoMutalyzerShared.GenBank;
 
 namespace ExtractGenBank.GenBank
 {
@@ -56,22 +54,22 @@ namespace ExtractGenBank.GenBank
             _parser     = new GenBankFeatureParser(_readerData);
         }
 
-        public Dictionary<string, GenBankTranscript> GetIdToTranscript()
+        public List<RefSeq.Transcript> GetTranscripts()
         {
-            var idToTranscript = new Dictionary<string, GenBankTranscript>();
+            var transcripts = new List<RefSeq.Transcript>();
             
             while (true)
             {
-                GenBankTranscript genBankTranscript = ParseTranscript();
-                if (genBankTranscript == null) break;
+                RefSeq.Transcript transcript = ParseTranscript();
+                if (transcript == null) break;
                 
-                idToTranscript[genBankTranscript.Id] = genBankTranscript;
+                transcripts.Add(transcript);
             }
 
-            return idToTranscript;
+            return transcripts;
         }
 
-        private GenBankTranscript ParseTranscript()
+        private RefSeq.Transcript ParseTranscript()
         {
             string         id  = GetVersion();
             if (id == null) return null;
@@ -100,17 +98,21 @@ namespace ExtractGenBank.GenBank
 
             string cdnaSequence = ParseSequence();
 
-            string   cdsSequence  = null;
-            Interval codingRegion = null;
-            
+            string aaSeqence      = cds?.Translation;
+            string proteinId      = cds?.ProteinId;
+            byte   startExonPhase = cds == null ? (byte) 0 : (byte) (cds.CodonStart - 1);
+
+            RefSeq.CodingRegion codingRegion = null;
+            string              cdsSequence  = null;
+
             if (cds != null)
             {
-                codingRegion = new Interval(cds.Start, cds.End);
-                cdsSequence  = cdnaSequence.Substring(codingRegion.Start - 1, codingRegion.Length);
+                codingRegion = new RefSeq.CodingRegion(-1, -1, cds.Start, cds.End);
+                cdsSequence  = cdnaSequence.Substring(cds.Start - 1, cds.End - cds.Start + 1);
             }
 
-            return new GenBankTranscript(id, gene.GeneSymbol, cdnaSequence, cdsSequence, cds?.Translation,
-                codingRegion);
+            return new RefSeq.Transcript(id, proteinId, gene.GeneSymbol, cdnaSequence, cdsSequence, aaSeqence,
+                codingRegion, startExonPhase);
         }
 
         private void FindFeatures()

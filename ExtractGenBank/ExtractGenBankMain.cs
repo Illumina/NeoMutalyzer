@@ -5,6 +5,7 @@ using System.Linq;
 using ExtractGenBank.GenBank;
 using IO;
 using NeoMutalyzerShared.GenBank;
+using Newtonsoft.Json;
 
 namespace ExtractGenBank
 {
@@ -25,28 +26,31 @@ namespace ExtractGenBank
             if (!outputDataPath.EndsWith(".gz")) outputDataPath += ".gz";
 
             Console.Write("- parsing GenBank file... ");
-            Dictionary<string, GenBankTranscript> idToTranscript = LoadTranscripts(inputGenBankPath);
-            Console.WriteLine($"{idToTranscript.Count} transcripts loaded.");
+            List<RefSeq.Transcript> transcripts = LoadTranscripts(inputGenBankPath);
+            Console.WriteLine($"{transcripts.Count} transcripts loaded.");
 
             Console.Write($"- writing transcripts to {Path.GetFileName(outputDataPath)}... ");
-            WriteTranscripts(idToTranscript, outputDataPath);
+            WriteTranscripts(outputDataPath, transcripts);
             Console.WriteLine("finished.");
         }
 
-        private static void WriteTranscripts(Dictionary<string, GenBankTranscript> idToTranscript, string filePath)
+        private static void WriteTranscripts(string filePath, List<RefSeq.Transcript> transcripts)
         {
-            using StreamWriter writer = FileUtilities.GzipWriter(filePath);
-
-            foreach ((_, GenBankTranscript transcript) in idToTranscript.OrderBy(x => x.Key))
+            var serializer = new JsonSerializer
             {
-                writer.WriteLine(transcript);
-            }
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting        = Formatting.Indented
+            };
+
+            using StreamWriter writer = FileUtilities.GzipWriter(filePath);
+            serializer.Serialize(writer,
+                transcripts.OrderBy(x => x.chromosome.Index).ThenBy(x => x.start).ThenBy(x => x.end));
         }
 
-        private static Dictionary<string, GenBankTranscript> LoadTranscripts(string filePath)
+        private static List<RefSeq.Transcript> LoadTranscripts(string filePath)
         {
             using var reader = new GenBankReader(FileUtilities.GetReadStream(filePath));
-            return reader.GetIdToTranscript();
+            return reader.GetTranscripts();
         }
     }
 }

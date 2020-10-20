@@ -12,9 +12,9 @@ namespace ExtractGenBank.GenBank
         public string     ProteinId  { get; }
         public Interval[] Regions    { get; }
         public string     Note       { get; }
+        public int        CodonStart { get; }
 
         private readonly string _geneId;
-        private readonly int    _codonStart;
         public readonly  string Translation;
 
         public CodingSequence(Interval interval, string geneSymbol, string locusTag, string geneId, Interval[] regions,
@@ -27,7 +27,7 @@ namespace ExtractGenBank.GenBank
             _geneId     = geneId;
             Regions     = regions;
             Note        = note;
-            _codonStart = codonStart;
+            CodonStart  = codonStart;
             Product     = product;
             ProteinId   = proteinId;
             Translation = translation;

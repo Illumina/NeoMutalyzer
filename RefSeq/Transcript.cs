@@ -21,6 +21,8 @@ namespace RefSeq
         
         public CodingRegion codingRegion;
         public string       proteinId;
+
+        public string[] transcriptRegionsCode;
         
         public string cdnaSequence;
         public string cdsSequence;
@@ -47,16 +49,34 @@ namespace RefSeq
 
         // GFF3 snapshot constructor
         public Transcript(string id, Chromosome chromosome, int start, int end, bool onReverseStrand, ushort numExons,
-            TranscriptRegion[] transcriptRegions)
+            TranscriptRegion[] transcriptRegions, string[] transcriptRegionsCode)
         {
-            this.id                = id;
-            this.chromosome        = chromosome;
-            this.start             = start;
-            this.end               = end;
-            this.onReverseStrand   = onReverseStrand;
-            this.numExons          = numExons;
-            this.transcriptRegions = transcriptRegions;
+            this.id                    = id;
+            this.chromosome            = chromosome;
+            this.start                 = start;
+            this.end                   = end;
+            this.onReverseStrand       = onReverseStrand;
+            this.numExons              = numExons;
+            this.transcriptRegions     = transcriptRegions;
+            this.transcriptRegionsCode = transcriptRegionsCode;
         }
+        
+        // GenBank (transcript entry) constructor
+        public Transcript(string id, string proteinId, string geneSymbol, string cdnaSequence, string cdsSequence,
+            string aaSeqence, CodingRegion codingRegion, byte startExonPhase)
+        {
+            this.id             = id;
+            this.proteinId      = proteinId;
+            this.geneSymbol     = geneSymbol;
+            this.cdnaSequence   = cdnaSequence;
+            this.cdsSequence    = cdsSequence;
+            this.aaSeqence      = aaSeqence;
+            this.codingRegion   = codingRegion;
+            this.startExonPhase = startExonPhase;
+        }        
+        
+        // return new GenBankTranscript(id, gene.GeneSymbol, cdnaSequence, cdsSequence, cds?.Translation,
+        // codingRegion);
         
         // genome GFF3
         // public string       proteinId;

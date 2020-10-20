@@ -54,7 +54,7 @@ namespace NeoMutalyzerShared.Validation
             // Interval expectedRightProteinPos = VariantRotator.Right(transcript.AminoAcidPos, transcript.RefAminoAcids,
             //     transcript.AltAminoAcids, variantType, gbTranscript.AminoAcidSequence).ShiftedPosition;
             
-            result.ValidateHgvsCoding(gbTranscript, transcript.HgvsCoding, expectedRightCdsPos, variantType);
+            result.ValidateHgvsCoding(gbTranscript, transcript.HgvsCoding, expectedRightCdsPos, variantType, transcript.OverlapsIntronAndExon);
             result.ValidateHgvsProtein(gbTranscript, transcript.HgvsProtein);
         }
     }

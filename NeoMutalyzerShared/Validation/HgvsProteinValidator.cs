@@ -18,6 +18,7 @@ namespace NeoMutalyzerShared.Validation
 
             // look for an invalid alt allele
             if (interval.AltAA == ProteinInterval.UnknownAA) result.HasHgvsProteinAltAlleleError = true;
+            if (hgvsProtein.Contains("_?_")) result.HasHgvsProteinUnknownError                   = true;
             
             // check the right rotated protein position
             // result.ValidateRightRotation(expectedRightProteinPos, interval.Start.Position, interval.End.Position);
@@ -26,12 +27,6 @@ namespace NeoMutalyzerShared.Validation
         private static void ValidateProteinPosition(this ValidationResult result, ProteinPosition position,
             IGenBankTranscript genBankTranscript)
         {
-            if (position.RefAA == ProteinInterval.UnknownAA[0])
-            {
-                result.HasHgvsProteinUnknownError = true;
-                return;
-            }
-            
             string aa = genBankTranscript.GetAminoAcids(position.Position, position.Position);
             if (string.IsNullOrEmpty(aa)) return;
 

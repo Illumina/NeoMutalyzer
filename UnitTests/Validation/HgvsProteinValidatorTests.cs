@@ -20,15 +20,12 @@ namespace UnitTests.Validation
             result.ValidateHgvsProtein(mockTranscript.Object, "NP_001137434.1:p.(Val701_?_fsTer?)");
 
             Assert.True(result.HasErrors);
-            Assert.True(result.HasHgvsProteinAltAlleleError);
+            Assert.True(result.HasHgvsProteinUnknownError);
         }
         
         [Fact]
         public void ValidateHgvsProtein_NP_115505_2_Silent_MultipleRefAA_Correct()
         {
-            // 
-            //
-            //
             var result         = new ValidationResult();
             var mockTranscript = new Mock<IGenBankTranscript>();
             mockTranscript.Setup(x => x.GetAminoAcids(525, 525)).Returns("A");

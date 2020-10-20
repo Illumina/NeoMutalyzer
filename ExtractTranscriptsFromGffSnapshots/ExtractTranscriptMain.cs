@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using ExtractTranscriptsFromGffSnapshots.GFF;
 using IO;
+using NeoMutalyzerShared.Utilities;
 using Newtonsoft.Json;
 using ReferenceSequence;
 using RefSeq;
@@ -89,14 +90,16 @@ namespace ExtractTranscriptsFromGffSnapshots
             bool onReverseStrand = geneModel.Exons[0].onReverseStrand;
             var  numExons        = (ushort) geneModel.Exons.Count;
 
+            string[] transcriptRegionsCode = transcriptRegions.ToCodeLines(onReverseStrand);
+
             return new RefSeq.Transcript(geneModel.TranscriptId, geneModel.Chromosome, start, end, onReverseStrand,
-                numExons, transcriptRegions);
+                numExons, transcriptRegions, transcriptRegionsCode);
         }
 
         private static TranscriptRegion[] GetTranscriptRegions(List<Exon> exons)
         {
             var    transcriptRegions = new List<TranscriptRegion>(exons.Count);
-            ushort exonIndex         = 0;
+            ushort exonIndex         = 1;
 
             foreach (Exon exon in exons.OrderBy(x => x.cdnaStart))
             {

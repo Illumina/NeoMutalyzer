@@ -14,5 +14,6 @@
     <ItemGroup>
       <ProjectReference Include="..\NeoMutalyzerShared\NeoMutalyzerShared.csproj" />
       <ProjectReference Include="..\NeoMutalyzer\NeoMutalyzer.csproj" />
+      <ProjectReference Include="..\RefSeq\RefSeq.csproj" />
     </ItemGroup>
 </Project>
