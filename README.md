@@ -44,7 +44,7 @@ NeoMutalyzer outputs a number of error categories:
 | HGVS p. RefAllele        | The reference AA in the HGVS notation don't match the AAs at the HGVS position                 | 
 | HGVS p. Unknown          | One of the ref AAs uses an unknown amino acid abbreviation (usually \_?\_)                     | 
 | HGVS p. Position         | (not used at the moment)                                                                       | 
-| HGVS p. AltAllele        | This HGVS seems to be from our ""unknown"" output template.                                    | 
+| HGVS p. AltAllele        | This HGVS seems to be from our "unknown" output template.                                      | 
 | cDNA RefAllele           | The reference bases in codons don't match the cDNA bases found at cdnaPos                      | 
 | CDS RefAllele            | The reference bases in codons don't match the CDS bases found at cdsPos                        | 
 | Invalid cDNA position    | cDNA position beyond the bounds of the cDNA sequence [1, length]                               | 
