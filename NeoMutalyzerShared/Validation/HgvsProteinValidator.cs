@@ -11,6 +11,7 @@ namespace NeoMutalyzerShared.Validation
             if (hgvsProtein == null) return;
 
             ProteinInterval interval = HgvsProteinParser.Parse(hgvsProtein);
+            if (interval == null) return;
 
             // evaluate each position independently. For the most part, HGVS p. lists the first and last ref AA
             result.ValidateProteinPosition(interval.Start, genBankTranscript);
