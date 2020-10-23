@@ -60,6 +60,7 @@ namespace UnitTests.HgvsParsing
         }
 
         [Theory]
+        [InlineData("NM_000314.6:c.956_959del",     956,  959,  "",     "", true)]
         [InlineData("NM_000314.6:c.956_959delACTT", 956,  959,  "ACTT", "", true)]
         [InlineData("NR_039983.2:n.3602delC",       3602, 3602, "C",    "", false)]
         public void Parse_Deletion(string hgvsCoding, int expectedStart, int expectedEnd, string expectedRef,
@@ -76,6 +77,7 @@ namespace UnitTests.HgvsParsing
 
         [Theory]
         [InlineData("NM_198317.2:c.585_586delGGinsTT", 585, 586, "GG", "TT", true)]
+        [InlineData("NM_198317.2:c.585_586delinsTT", 585, 586, "", "TT", true)]
         [InlineData("NM_198317.2:n.585_586delGGinsTT", 585, 586, "GG", "TT", false)]
         public void Parse_DelIns(string hgvsCoding, int expectedStart, int expectedEnd, string expectedRef,
             string expectedAlt, bool expectedCoding)

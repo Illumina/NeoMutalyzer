@@ -66,7 +66,7 @@ namespace NeoMutalyzerShared.HgvsParsing
             if (hgvsProtein.Contains("fs")) return ParseFrameshift(hgvsProtein);
             if (hgvsProtein.Contains("extTer")) return ParseExtension(hgvsProtein);
             if (hgvsProtein.Contains("dup")) return ParseDuplication(hgvsProtein);
-            if (hgvsProtein.EndsWith(":p.?")) return null;
+            if (hgvsProtein.EndsWith(":p.?") || hgvsProtein.EndsWith(":p.0?")) return null;
             if (IsUnknown(hgvsProtein)) return ParseUnknown(hgvsProtein); // TODO: this should be deprecated
             return ParseSubstitution(hgvsProtein);
         }

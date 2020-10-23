@@ -14,11 +14,12 @@
         public readonly string   HgvsCoding;
         public readonly string   HgvsProtein;
         public readonly bool     OverlapsIntronAndExon;
+        public readonly bool     IsCanonical;
         public readonly string   Json;
 
         public Transcript(string id, string geneId, string refAllele, string altAllele, string refAminoAcids,
             string altAminoAcids, Interval cdnaPos, Interval cdsPos, Interval aminoAcidPos, string hgvsCoding,
-            string hgvsProtein, bool overlapsIntronAndExon, string json)
+            string hgvsProtein, bool overlapsIntronAndExon, bool isCanonical, string json)
         {
             Id                    = id;
             GeneId                = geneId;
@@ -32,6 +33,7 @@
             HgvsCoding            = hgvsCoding;
             HgvsProtein           = hgvsProtein;
             OverlapsIntronAndExon = overlapsIntronAndExon;
+            IsCanonical           = isCanonical;
             Json                  = json;
         }
     }

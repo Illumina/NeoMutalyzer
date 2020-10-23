@@ -170,6 +170,7 @@ namespace UnitTests.HgvsParsing
         }
 
         [Theory]
+        [InlineData("NP_112199.2:p.0?")]
         [InlineData("NP_112199.2:p.?")]
         public void Parse_StartLost(string hgvsProtein)
         {

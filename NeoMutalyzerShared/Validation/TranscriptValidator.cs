@@ -8,7 +8,21 @@ namespace NeoMutalyzerShared.Validation
 {
     public static class TranscriptValidator
     {
-        public static readonly AccuracyStatistics Statistics = new AccuracyStatistics();
+        private static readonly AccuracyStatistics Statistics          = new AccuracyStatistics();
+        private static readonly AccuracyStatistics CanonicalStatistics = new AccuracyStatistics();
+
+        public static void DisplayStatistics()
+        {
+            Console.WriteLine();
+            Console.WriteLine("All transcripts:");
+            Console.WriteLine("================");
+            Statistics.Display();
+            
+            Console.WriteLine();
+            Console.WriteLine("Canonical transcripts:");
+            Console.WriteLine("======================");
+            CanonicalStatistics.Display();
+        }
 
         public static void Validate(Position position, Dictionary<string, GenBankTranscript> idToTranscript,
             Func<string, bool> FilterGene)
@@ -33,11 +47,13 @@ namespace NeoMutalyzerShared.Validation
                     if (result.HasErrors)
                     {
                         Statistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, true);
-                        result.DumpErrors(variant.VID, transcript.Id, transcript.HgvsCoding, transcript.HgvsProtein,
+                        if (transcript.IsCanonical) CanonicalStatistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, true);
+                        result.DumpErrors(variant.VID, transcript.Id, gbTranscript.GeneSymbol, transcript.HgvsCoding, transcript.HgvsProtein,
                             transcript.Json);
                     }
 
                     Statistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, false);
+                    if (transcript.IsCanonical) CanonicalStatistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, false);
                 }
             }
         }

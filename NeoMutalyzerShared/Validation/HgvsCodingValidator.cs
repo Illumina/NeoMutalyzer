@@ -35,7 +35,8 @@ namespace NeoMutalyzerShared.Validation
                 ? genBankTranscript.GetCds(hgvsInterval.Start.Position, hgvsInterval.End.Position)
                 : genBankTranscript.GetCdna(hgvsInterval.Start.Position, hgvsInterval.End.Position);
 
-            if (hgvsRef != bases) result.HasHgvsCodingRefAlleleError = true;
+            bool skipRefBases = (variantType == VariantType.deletion || variantType == VariantType.indel) && string.IsNullOrEmpty(hgvsRef);
+            if (!skipRefBases && hgvsRef != bases) result.HasHgvsCodingRefAlleleError = true;
 
             // check the expected position. We need to take into account that some CDS need to be rotated outside.
             if (!overlapsIntronAndExon && expectedRightCdsPos != null && isCoding && !hgvsInterval.Equals(expectedRightCdsPos))

@@ -53,8 +53,7 @@ namespace NeoMutalyzerGeneFilter
                 TranscriptValidator.Validate(position, idToTranscript, geneId => !entrezGeneIds.Contains(geneId));
             }
 
-            Console.WriteLine();
-            TranscriptValidator.Statistics.Display();
+            TranscriptValidator.DisplayStatistics();
             
             Console.WriteLine();
             Console.WriteLine($"  - elapsed time: {benchmark.GetElapsedTime()}");

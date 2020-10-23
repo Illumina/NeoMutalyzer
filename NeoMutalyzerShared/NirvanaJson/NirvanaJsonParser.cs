@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 using Compression;
+using Microsoft.CSharp.RuntimeBinder;
 using NeoMutalyzerShared.Annotated;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -139,8 +140,10 @@ namespace NeoMutalyzerShared.NirvanaJson
             string exons       = transcript.exons;
             string introns     = transcript.introns;
 
-            bool overlapsIntronAndExon = !string.IsNullOrEmpty(exons) && !string.IsNullOrEmpty(introns);
-
+            bool   overlapsIntronAndExon = !string.IsNullOrEmpty(exons) && !string.IsNullOrEmpty(introns);
+            string canonical             = transcript.isCanonical;
+            bool   isCanonical           = !string.IsNullOrEmpty(canonical);
+            
             (string refAllele, string altAllele)         = GetAllelesFromCodons(codons);
             (string refAminoAcids, string altAminoAcids) = GetAllelesFromAminoAcids(aminoAcids);
 
@@ -149,9 +152,10 @@ namespace NeoMutalyzerShared.NirvanaJson
             Interval aminoAcidPos = GetIntervalFromRange(aaRange);
 
             return new Transcript(id, geneId, refAllele, altAllele, refAminoAcids, altAminoAcids, cdnaPos, cdsPos,
-                aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, transcript.ToString(Formatting.None));
+                aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, isCanonical,
+                transcript.ToString(Formatting.None));
         }
-
+        
         private static (string RefAminoAcids, string AltAminoAcids) GetAllelesFromAminoAcids(string aminoAcids)
         {
             if (aminoAcids == null) return (null, null);

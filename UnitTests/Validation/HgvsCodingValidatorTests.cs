@@ -27,6 +27,25 @@ namespace UnitTests.Validation
             Assert.True(result.HasHgvsCodingPositionError);
             Assert.True(result.HasHgvsCodingRefAlleleError);
         }
+        
+        [Fact]
+        public void ValidateHgvsCoding_NM_000314_6_956_959del_OnlyPositionError()
+        {
+            var result       = new ValidationResult();
+            var rightCdsPos  = new Interval(955, 958);
+            var codingRegion = new Interval(81,  2126);
+
+            var mockTranscript = new Mock<IGenBankTranscript>();
+            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            mockTranscript.Setup(x => x.GetCds(956, 959)).Returns("CTTT");
+
+            result.ValidateHgvsCoding(mockTranscript.Object, "NM_000314.6:c.956_959del", rightCdsPos,
+                VariantType.indel, false);
+
+            Assert.True(result.HasErrors);
+            Assert.True(result.HasHgvsCodingPositionError);
+            Assert.False(result.HasHgvsCodingRefAlleleError);
+        }
 
         [Fact]
         public void ValidateHgvsCoding_NM_152486_2_PastCodingRegion_Correct()

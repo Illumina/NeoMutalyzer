@@ -49,10 +49,10 @@ namespace NeoMutalyzerShared.Validation
             HasProteinRefAlleleError          = false;
         }
 
-        public void DumpErrors(string vid, string transcriptId, string hgvsCoding, string hgvsProtein,
+        public void DumpErrors(string vid, string transcriptId, string geneSymbol, string hgvsCoding, string hgvsProtein,
             string transcriptJson)
         {
-            Console.Write($"{vid}\t{transcriptId}\t{hgvsCoding}\t{hgvsProtein}\t");
+            Console.Write($"{vid}\t{transcriptId}\t{geneSymbol}\t{hgvsCoding}\t{hgvsProtein}\t");
 
             if (HasHgvsCodingRefAlleleError) Console.Write("HGVS c. RefAllele\t");
             if (HasHgvsCodingPositionError) Console.Write("HGVS c. Position\t");

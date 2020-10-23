@@ -2,10 +2,10 @@
 {
     public class AccuracyStatistics
     {
-        private readonly Subset TranscriptVariants = new Subset();
-        private readonly Subset Variants           = new Subset();
-        private readonly Subset Transcripts        = new Subset();
-        private readonly Subset Genes              = new Subset();
+        private readonly Subset TranscriptVariants          = new Subset();
+        private readonly Subset Variants                    = new Subset();
+        private readonly Subset Transcripts                 = new Subset();
+        private readonly Subset Genes                       = new Subset();
 
         public void Add(string vid, string transcriptId, string geneSymbol, bool isBad)
         {
