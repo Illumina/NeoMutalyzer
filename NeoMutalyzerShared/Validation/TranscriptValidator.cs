@@ -40,11 +40,6 @@ namespace NeoMutalyzerShared.Validation
                         Console.WriteLine($"ERROR: Unable to find the following transcript: {transcript.Id}");
                         Environment.Exit(1);
                     }
-                    
-                    if(transcript.Id =="NM_001203248.1" && transcript.HgvsCoding == "NM_001203248.1:c.701delA")
-                    {
-                        Console.WriteLine("BOB");
-                    }
 
                     result.Reset();
                     ValidateTranscript(gbTranscript, transcript, variant.Type, result);

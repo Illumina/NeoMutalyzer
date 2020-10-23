@@ -39,6 +39,20 @@ namespace UnitTests.HgvsParsing
         }
 
         [Theory]
+        [InlineData("NM_001193322.1:c.156=", 156, true)]
+        public void Parse_Silent(string hgvsCoding, int expectedStart, bool expectedCoding)
+        {
+            (CodingInterval actualPos, string actualRef, string actualAlt, bool actualCoding) =
+                HgvsCodingParser.Parse(hgvsCoding);
+            
+            Assert.Equal(expectedStart, actualPos.Start.Position);
+            Assert.Equal(expectedStart, actualPos.End.Position);
+            Assert.Null(actualRef);
+            Assert.Null(actualAlt);
+            Assert.Equal(expectedCoding, actualCoding);
+        }
+
+        [Theory]
         [InlineData("NM_001005484.1:c.134A>C", 134,  0,  134,  0,  "A", "C", true)]
         [InlineData("NR_039983.2:n.5215C>T",   5215, 0,  5215, 0,  "C", "T", false)]
         [InlineData("NM_152486.2:c.-28G>A",    -28,  0,  -28,  0,  "G", "A", true)]

@@ -23,6 +23,9 @@ namespace NeoMutalyzerShared.HgvsParsing
         
         private static readonly Regex _delInsRegex =
             new Regex(@"^[^:]+:(c|n)\.(.*?)del(.*?)ins(.*)$", RegexOptions.Compiled);
+        
+        private static readonly Regex _silentRegex =
+            new Regex(@"^[^:]+:(c|n)\.(.*?)=$", RegexOptions.Compiled);
 
         public static (CodingInterval CdsPos, string RefAllele, string AltAllele, bool IsCoding) Parse(string hgvsCoding)
         {
@@ -35,6 +38,7 @@ namespace NeoMutalyzerShared.HgvsParsing
             if (hasIns) return ParseInsertion(hgvsCoding);
             if (hgvsCoding.Contains("dup")) return ParseDuplication(hgvsCoding);
             if (hgvsCoding.Contains("inv")) return ParseInversion(hgvsCoding);
+            if (hgvsCoding.Contains("=")) return ParseSilent(hgvsCoding);
             throw new NotImplementedException($"Unable to parse the HGVS coding string: {hgvsCoding}");
         }
 
@@ -82,6 +86,20 @@ namespace NeoMutalyzerShared.HgvsParsing
 
             var cdsPos = new CodingInterval(cdsStart, cdsStart);
             return (cdsPos, refAllele, altAllele, isCoding);
+        }
+        
+        private static (CodingInterval CdsPos, string RefAllele, string AltAllele, bool IsCoding) ParseSilent(
+            string hgvsCoding)
+        {
+            Match match = _silentRegex.Match(hgvsCoding);
+            if (!match.Success) throw new InvalidDataException($"Unable to apply HGVS c. regex to: {hgvsCoding}");
+
+            // always single position and has =
+            bool           isCoding  = match.Groups[1].Value == "c";
+            PositionOffset cdsStart  = HgvsRange.ParseIntronOffset(match.Groups[2].Value);
+
+            var cdsPos = new CodingInterval(cdsStart, cdsStart);
+            return (cdsPos, null, null, isCoding);
         }
 
         private static (CodingInterval CdsPos, string RefAllele, string AltAllele, bool IsCoding) ParseDeletion(string hgvsCoding)

@@ -129,17 +129,17 @@ namespace NeoMutalyzerShared.NirvanaJson
 
             if (source != RefSeq || string.IsNullOrEmpty(hgvsCoding)) return null;
 
-            string id           = transcript.transcript;
-            string geneId       = transcript.geneId;
-            string hgvsProtein  = transcript.hgvsp;
-            string codons       = transcript.codons;
-            string aminoAcids   = transcript.aminoAcids;
-            string cdnaRange    = transcript.cdnaPos;
-            string cdsRange     = transcript.cdsPos;
-            string aaRange      = transcript.proteinPos;
-            string exons        = transcript.exons;
-            string introns      = transcript.introns;
-            string consequences = transcript.consequence;
+            string   id           = transcript.transcript;
+            string   geneId       = transcript.geneId;
+            string   hgvsProtein  = transcript.hgvsp;
+            string   codons       = transcript.codons;
+            string   aminoAcids   = transcript.aminoAcids;
+            string   cdnaRange    = transcript.cdnaPos;
+            string   cdsRange     = transcript.cdsPos;
+            string   aaRange      = transcript.proteinPos;
+            string   exons        = transcript.exons;
+            string   introns      = transcript.introns;
+            // string[] consequences = transcript.consequence;
 
             bool   overlapsIntronAndExon = !string.IsNullOrEmpty(exons) && !string.IsNullOrEmpty(introns);
             string canonical             = transcript.isCanonical;
