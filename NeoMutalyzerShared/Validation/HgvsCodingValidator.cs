@@ -7,7 +7,8 @@ namespace NeoMutalyzerShared.Validation
     public static class HgvsCodingValidator
     {
         public static void ValidateHgvsCoding(this ValidationResult result, IGenBankTranscript genBankTranscript,
-            string hgvsCoding, Interval expectedRightCdsPos, VariantType variantType, bool overlapsIntronAndExon)
+            string hgvsCoding, Interval expectedRightCdsPos, VariantType variantType, bool overlapsIntronAndExon,
+            bool isSpliceVariant)
         {
             if (variantType == VariantType.insertion) return;
             
@@ -39,8 +40,8 @@ namespace NeoMutalyzerShared.Validation
             if (!skipRefBases && hgvsRef != bases) result.HasHgvsCodingRefAlleleError = true;
 
             // check the expected position. We need to take into account that some CDS need to be rotated outside.
-            if (!overlapsIntronAndExon && expectedRightCdsPos != null && isCoding && !hgvsInterval.Equals(expectedRightCdsPos))
-                result.HasHgvsCodingPositionError = true;
+            if (!overlapsIntronAndExon && !isSpliceVariant && expectedRightCdsPos != null && isCoding &&
+                !hgvsInterval.Equals(expectedRightCdsPos)) result.HasHgvsCodingPositionError = true;
         }
 
         private static bool HasConflictingInfo(CodingInterval interval) =>
