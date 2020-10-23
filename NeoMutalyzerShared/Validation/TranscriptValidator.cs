@@ -40,6 +40,11 @@ namespace NeoMutalyzerShared.Validation
                         Console.WriteLine($"ERROR: Unable to find the following transcript: {transcript.Id}");
                         Environment.Exit(1);
                     }
+                    
+                    if(transcript.Id =="NM_001203248.1" && transcript.HgvsCoding == "NM_001203248.1:c.701delA")
+                    {
+                        Console.WriteLine("BOB");
+                    }
 
                     result.Reset();
                     ValidateTranscript(gbTranscript, transcript, variant.Type, result);
@@ -70,7 +75,7 @@ namespace NeoMutalyzerShared.Validation
             // Interval expectedRightProteinPos = VariantRotator.Right(transcript.AminoAcidPos, transcript.RefAminoAcids,
             //     transcript.AltAminoAcids, variantType, gbTranscript.AminoAcidSequence).ShiftedPosition;
             
-            result.ValidateHgvsCoding(gbTranscript, transcript.HgvsCoding, expectedRightCdsPos, variantType, transcript.OverlapsIntronAndExon);
+            result.ValidateHgvsCoding(gbTranscript, transcript.HgvsCoding, expectedRightCdsPos, variantType, transcript.OverlapsIntronAndExon, transcript.IsSpliceVariant);
             result.ValidateHgvsProtein(gbTranscript, transcript.HgvsProtein);
         }
     }

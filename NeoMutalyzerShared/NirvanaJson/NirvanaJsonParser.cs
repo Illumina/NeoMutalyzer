@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Compression;
-using Microsoft.CSharp.RuntimeBinder;
 using NeoMutalyzerShared.Annotated;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -129,20 +129,23 @@ namespace NeoMutalyzerShared.NirvanaJson
 
             if (source != RefSeq || string.IsNullOrEmpty(hgvsCoding)) return null;
 
-            string id          = transcript.transcript;
-            string geneId      = transcript.geneId;
-            string hgvsProtein = transcript.hgvsp;
-            string codons      = transcript.codons;
-            string aminoAcids  = transcript.aminoAcids;
-            string cdnaRange   = transcript.cdnaPos;
-            string cdsRange    = transcript.cdsPos;
-            string aaRange     = transcript.proteinPos;
-            string exons       = transcript.exons;
-            string introns     = transcript.introns;
+            string id           = transcript.transcript;
+            string geneId       = transcript.geneId;
+            string hgvsProtein  = transcript.hgvsp;
+            string codons       = transcript.codons;
+            string aminoAcids   = transcript.aminoAcids;
+            string cdnaRange    = transcript.cdnaPos;
+            string cdsRange     = transcript.cdsPos;
+            string aaRange      = transcript.proteinPos;
+            string exons        = transcript.exons;
+            string introns      = transcript.introns;
+            string consequences = transcript.consequence;
 
             bool   overlapsIntronAndExon = !string.IsNullOrEmpty(exons) && !string.IsNullOrEmpty(introns);
             string canonical             = transcript.isCanonical;
             bool   isCanonical           = !string.IsNullOrEmpty(canonical);
+            // bool   isSpliceVariant       = consequences.Any(consequence => consequence.Contains("splice"));
+            bool isSpliceVariant = false;
             
             (string refAllele, string altAllele)         = GetAllelesFromCodons(codons);
             (string refAminoAcids, string altAminoAcids) = GetAllelesFromAminoAcids(aminoAcids);
@@ -152,10 +155,10 @@ namespace NeoMutalyzerShared.NirvanaJson
             Interval aminoAcidPos = GetIntervalFromRange(aaRange);
 
             return new Transcript(id, geneId, refAllele, altAllele, refAminoAcids, altAminoAcids, cdnaPos, cdsPos,
-                aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, isCanonical,
+                aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, isCanonical, isSpliceVariant,
                 transcript.ToString(Formatting.None));
         }
-        
+
         private static (string RefAminoAcids, string AltAminoAcids) GetAllelesFromAminoAcids(string aminoAcids)
         {
             if (aminoAcids == null) return (null, null);
