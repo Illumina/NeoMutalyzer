@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Compression;
 using NeoMutalyzerShared.Annotated;
@@ -129,23 +128,22 @@ namespace NeoMutalyzerShared.NirvanaJson
 
             if (source != RefSeq || string.IsNullOrEmpty(hgvsCoding)) return null;
 
-            string   id           = transcript.transcript;
-            string   geneId       = transcript.geneId;
-            string   hgvsProtein  = transcript.hgvsp;
-            string   codons       = transcript.codons;
-            string   aminoAcids   = transcript.aminoAcids;
-            string   cdnaRange    = transcript.cdnaPos;
-            string   cdsRange     = transcript.cdsPos;
-            string   aaRange      = transcript.proteinPos;
-            string   exons        = transcript.exons;
-            string   introns      = transcript.introns;
-            // string[] consequences = transcript.consequence;
+            string id           = transcript.transcript;
+            string geneId       = transcript.geneId;
+            string hgvsProtein  = transcript.hgvsp;
+            string codons       = transcript.codons;
+            string aminoAcids   = transcript.aminoAcids;
+            string cdnaRange    = transcript.cdnaPos;
+            string cdsRange     = transcript.cdsPos;
+            string aaRange      = transcript.proteinPos;
+            string exons        = transcript.exons;
+            string introns      = transcript.introns;
+            string consequences = transcript.consequence.ToString(Formatting.None);
 
             bool   overlapsIntronAndExon = !string.IsNullOrEmpty(exons) && !string.IsNullOrEmpty(introns);
             string canonical             = transcript.isCanonical;
             bool   isCanonical           = !string.IsNullOrEmpty(canonical);
-            // bool   isSpliceVariant       = consequences.Any(consequence => consequence.Contains("splice"));
-            bool isSpliceVariant = false;
+            bool   isSpliceVariant       = consequences.Contains("splice");
             
             (string refAllele, string altAllele)         = GetAllelesFromCodons(codons);
             (string refAminoAcids, string altAminoAcids) = GetAllelesFromAminoAcids(aminoAcids);
