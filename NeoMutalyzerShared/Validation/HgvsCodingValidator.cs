@@ -1,4 +1,5 @@
-﻿using NeoMutalyzerShared.Annotated;
+﻿using System;
+using NeoMutalyzerShared.Annotated;
 using NeoMutalyzerShared.GenBank;
 using NeoMutalyzerShared.HgvsParsing;
 
@@ -12,7 +13,7 @@ namespace NeoMutalyzerShared.Validation
         {
             if (variantType == VariantType.insertion)
             {
-                result.ValidateHgvsCodingInsertion(hgvsCoding, genBankTranscript.CodingRegion);
+                if (!hgvsCoding.Contains("dup")) result.ValidateHgvsCodingInsertion(hgvsCoding, genBankTranscript.CodingRegion);
                 return;
             }
             
