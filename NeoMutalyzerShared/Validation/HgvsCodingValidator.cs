@@ -36,8 +36,9 @@ namespace NeoMutalyzerShared.Validation
                 ? genBankTranscript.GetCds(hgvsInterval.Start.Position, hgvsInterval.End.Position)
                 : genBankTranscript.GetCdna(hgvsInterval.Start.Position, hgvsInterval.End.Position);
 
-            bool isSilentVariant = string.IsNullOrEmpty(hgvsRef) && string.IsNullOrEmpty(hgvsAlt);
-            bool isDelOrDelIns   = hgvsCoding.Contains("delins") || hgvsCoding.Contains("del");
+            bool isRefAlleleEmpty = string.IsNullOrEmpty(hgvsRef);
+            bool isSilentVariant  = isRefAlleleEmpty && string.IsNullOrEmpty(hgvsAlt);
+            bool isDelOrDelIns    = (hgvsCoding.Contains("delins") || hgvsCoding.Contains("del")) && isRefAlleleEmpty;
             
             if (!isSilentVariant && !isDelOrDelIns && hgvsRef != bases) result.HasHgvsCodingRefAlleleError = true;
 

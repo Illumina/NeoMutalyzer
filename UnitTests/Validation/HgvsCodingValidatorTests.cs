@@ -154,23 +154,21 @@ namespace UnitTests.Validation
             Assert.False(result.HasErrors);
         }
         
-        // [Fact]
-        // public void ValidateHgvsCoding_NM_001203248_1_NearExonBoundary_Correct()
-        // {
-        //     // 7-148524255-NT-N        NM_001203248.1  EZH2    NM_001203248.1:c.701delA        NP_001190177.1:p.(Lys234AsnfsTer22)     HGVS c. Position        {"transcript":"NM_001203248.1","source":"RefSeq","bioType":"protein_coding","codons":"aAa/aa","aminoAcids":"K/X","cdnaPos":"894","cdsPos":"701","exons":"7/20","proteinPos":"234","geneId":"2146","hgnc":"EZH2","consequence":["frameshift_variant","splice_region_variant"],"hgvsc":"NM_001203248.1:c.701delA","hgvsp":"NP_001190177.1:p.(Lys234AsnfsTer22)","proteinId":"NP_001190177.1"}
-        //     
-        //     var result       = new ValidationResult();
-        //     var rightCdsPos  = new Interval(791, 797);
-        //     var codingRegion = new Interval(150, 488);
-        //
-        //     var mockTranscript = new Mock<IGenBankTranscript>();
-        //     mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
-        //     mockTranscript.Setup(x => x.GetCds(801, 809)).Returns("TGATGAAGA");
-        //
-        //     result.ValidateHgvsCoding(mockTranscript.Object, "NM_001203248.1:c.701del", rightCdsPos,
-        //         VariantType.deletion, false, true);
-        //
-        //     Assert.False(result.HasErrors);
-        // }
+        [Fact]
+        public void ValidateHgvsCoding_NM_001203248_1_NearExonBoundary_Correct()
+        {
+            var result       = new ValidationResult();
+            var rightCdsPos  = new Interval(702, 702);
+            var codingRegion = new Interval(194, 2407);
+        
+            var mockTranscript = new Mock<IGenBankTranscript>();
+            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            mockTranscript.Setup(x => x.GetCds(701, 701)).Returns("A");
+        
+            result.ValidateHgvsCoding(mockTranscript.Object, "NM_001203248.1:c.701del", rightCdsPos,
+                VariantType.deletion, false, true);
+        
+            Assert.False(result.HasErrors);
+        }
     }
 }
