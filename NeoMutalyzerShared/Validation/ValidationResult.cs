@@ -6,6 +6,7 @@ namespace NeoMutalyzerShared.Validation
     {
         public bool HasHgvsCodingRefAlleleError;
         public bool HasHgvsCodingPositionError;
+        public bool HasHgvsCodingInsPositionError;
         public bool HasHgvsCodingBeforeCdsAndAfterCds;
         public bool HasHgvsProteinRefAlleleError;
         public bool HasHgvsProteinUnknownError;
@@ -20,6 +21,7 @@ namespace NeoMutalyzerShared.Validation
 
         public bool HasErrors => HasHgvsCodingRefAlleleError       ||
                                  HasHgvsCodingPositionError        ||
+                                 HasHgvsCodingInsPositionError     ||
                                  HasHgvsCodingBeforeCdsAndAfterCds ||
                                  HasHgvsProteinRefAlleleError      ||
                                  HasHgvsProteinUnknownError        ||
@@ -36,6 +38,7 @@ namespace NeoMutalyzerShared.Validation
         {
             HasHgvsCodingRefAlleleError       = false;
             HasHgvsCodingPositionError        = false;
+            HasHgvsCodingInsPositionError     = false;
             HasHgvsCodingBeforeCdsAndAfterCds = false;
             HasHgvsProteinRefAlleleError      = false;
             HasHgvsProteinUnknownError        = false;
@@ -56,6 +59,7 @@ namespace NeoMutalyzerShared.Validation
 
             if (HasHgvsCodingRefAlleleError) Console.Write("HGVS c. RefAllele\t");
             if (HasHgvsCodingPositionError) Console.Write("HGVS c. Position\t");
+            if (HasHgvsCodingInsPositionError) Console.Write("HGVS c. Ins Position\t");
             if (HasHgvsCodingBeforeCdsAndAfterCds) Console.Write("HGVS c. CDS range\t");
             if (HasHgvsProteinRefAlleleError) Console.Write("HGVS p. RefAllele\t");
             if (HasHgvsProteinUnknownError) Console.Write("HGVS p. Unknown\t");

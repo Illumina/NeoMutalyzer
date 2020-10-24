@@ -170,5 +170,21 @@ namespace UnitTests.Validation
         
             Assert.False(result.HasErrors);
         }
+        
+        [Fact]
+        public void ValidateHgvsCoding_NR_136542_1_NonConsecutivePositions_IncorrectPosition()
+        {
+            var result       = new ValidationResult();
+            var codingRegion = new Interval(-1, -1);
+        
+            var mockTranscript = new Mock<IGenBankTranscript>();
+            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+        
+            result.ValidateHgvsCoding(mockTranscript.Object, "NR_136542.1:n.3433_3435insC", null,
+                VariantType.insertion, false, false);
+        
+            Assert.True(result.HasErrors);
+            Assert.True(result.HasHgvsCodingInsPositionError);
+        }
     }
 }

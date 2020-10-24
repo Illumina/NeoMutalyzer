@@ -10,7 +10,11 @@ namespace NeoMutalyzerShared.Validation
             string hgvsCoding, Interval expectedRightCdsPos, VariantType variantType, bool overlapsIntronAndExon,
             bool isSpliceVariant)
         {
-            if (variantType == VariantType.insertion) return;
+            if (variantType == VariantType.insertion)
+            {
+                result.ValidateHgvsCodingInsertion(hgvsCoding, genBankTranscript.CodingRegion);
+                return;
+            }
             
             (CodingInterval hgvsInterval, string hgvsRef, string hgvsAlt, bool isCoding) =
                 HgvsCodingParser.Parse(hgvsCoding);
@@ -45,6 +49,29 @@ namespace NeoMutalyzerShared.Validation
             // check the expected position. We need to take into account that some CDS need to be rotated outside.
             if (!overlapsIntronAndExon && !isSpliceVariant && expectedRightCdsPos != null && isCoding &&
                 !hgvsInterval.Equals(expectedRightCdsPos)) result.HasHgvsCodingPositionError = true;
+        }
+
+        private static void ValidateHgvsCodingInsertion(this ValidationResult result, string hgvsCoding, Interval codingRegion)
+        {
+            (CodingInterval hgvsInterval, _, _, bool isCoding) = HgvsCodingParser.Parse(hgvsCoding);
+            
+            // we can't do much for intronic positions
+            if (hgvsInterval.Start.Offset != 0 || hgvsInterval.End.Offset != 0) return;
+            
+            // if our variant is beyond the coding end or has a negative start position, convert to cDNA
+            if (isCoding && IsCdnaSwitchNeeded(hgvsInterval))
+            {
+                if (HasConflictingInfo(hgvsInterval))
+                {
+                    result.HasHgvsCodingBeforeCdsAndAfterCds = true;
+                    return;
+                }                
+                
+                SwitchToCdnaSequence(ref hgvsInterval, codingRegion);
+            }
+
+            int diff = hgvsInterval.End.Position - hgvsInterval.Start.Position;
+            if (diff != 1) result.HasHgvsCodingInsPositionError = true;
         }
 
         private static bool HasConflictingInfo(CodingInterval interval) =>
