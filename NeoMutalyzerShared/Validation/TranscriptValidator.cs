@@ -66,11 +66,12 @@ namespace NeoMutalyzerShared.Validation
 
             Interval expectedRightCdsPos = VariantRotator.Right(transcript.CdsPos, transcript.RefAllele,
                 transcript.AltAllele, variantType, gbTranscript.CdsSequence).ShiftedPosition;
+
+            bool potentialCdsTruncation = transcript.CdsPos != null && transcript.CdsPos.Start == 1;
+
+            result.ValidateHgvsCoding(gbTranscript, transcript.HgvsCoding, expectedRightCdsPos, variantType,
+                transcript.OverlapsIntronAndExon, transcript.IsSpliceVariant, potentialCdsTruncation);
             
-            // Interval expectedRightProteinPos = VariantRotator.Right(transcript.AminoAcidPos, transcript.RefAminoAcids,
-            //     transcript.AltAminoAcids, variantType, gbTranscript.AminoAcidSequence).ShiftedPosition;
-            
-            result.ValidateHgvsCoding(gbTranscript, transcript.HgvsCoding, expectedRightCdsPos, variantType, transcript.OverlapsIntronAndExon, transcript.IsSpliceVariant);
             result.ValidateHgvsProtein(gbTranscript, transcript.HgvsProtein);
         }
     }

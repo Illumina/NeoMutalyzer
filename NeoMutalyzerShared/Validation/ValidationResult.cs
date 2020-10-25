@@ -6,6 +6,8 @@ namespace NeoMutalyzerShared.Validation
     {
         public bool HasHgvsCodingRefAlleleError;
         public bool HasHgvsCodingPositionError;
+        public bool HasHgvsCodingInsToDupError;
+        public bool HasHgvsCodingDupPositionError;
         public bool HasHgvsCodingInsPositionError;
         public bool HasHgvsCodingBeforeCdsAndAfterCds;
         public bool HasHgvsProteinRefAlleleError;
@@ -21,6 +23,8 @@ namespace NeoMutalyzerShared.Validation
 
         public bool HasErrors => HasHgvsCodingRefAlleleError       ||
                                  HasHgvsCodingPositionError        ||
+                                 HasHgvsCodingInsToDupError        ||
+                                 HasHgvsCodingDupPositionError     ||
                                  HasHgvsCodingInsPositionError     ||
                                  HasHgvsCodingBeforeCdsAndAfterCds ||
                                  HasHgvsProteinRefAlleleError      ||
@@ -38,6 +42,8 @@ namespace NeoMutalyzerShared.Validation
         {
             HasHgvsCodingRefAlleleError       = false;
             HasHgvsCodingPositionError        = false;
+            HasHgvsCodingInsToDupError        = false;
+            HasHgvsCodingDupPositionError     = false;
             HasHgvsCodingInsPositionError     = false;
             HasHgvsCodingBeforeCdsAndAfterCds = false;
             HasHgvsProteinRefAlleleError      = false;
@@ -59,6 +65,8 @@ namespace NeoMutalyzerShared.Validation
 
             if (HasHgvsCodingRefAlleleError) Console.Write("HGVS c. RefAllele\t");
             if (HasHgvsCodingPositionError) Console.Write("HGVS c. Position\t");
+            if (HasHgvsCodingInsToDupError) Console.Write("HGVS c. InsToDup\t");
+            if (HasHgvsCodingDupPositionError) Console.Write("HGVS c. Dup Position\t");
             if (HasHgvsCodingInsPositionError) Console.Write("HGVS c. Ins Position\t");
             if (HasHgvsCodingBeforeCdsAndAfterCds) Console.Write("HGVS c. CDS range\t");
             if (HasHgvsProteinRefAlleleError) Console.Write("HGVS p. RefAllele\t");

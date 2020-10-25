@@ -9,11 +9,12 @@ namespace NeoMutalyzerShared.Validation
     {
         public static void ValidateHgvsCoding(this ValidationResult result, IGenBankTranscript genBankTranscript,
             string hgvsCoding, Interval expectedRightCdsPos, VariantType variantType, bool overlapsIntronAndExon,
-            bool isSpliceVariant)
+            bool isSpliceVariant, bool potentialCdsTruncation)
         {
             if (variantType == VariantType.insertion)
             {
-                if (!hgvsCoding.Contains("dup")) result.ValidateHgvsCodingInsertion(hgvsCoding, genBankTranscript.CodingRegion);
+                if (hgvsCoding.Contains("ins")) result.ValidateHgvsCodingInsertion(hgvsCoding, genBankTranscript);
+                if (hgvsCoding.Contains("dup")) result.ValidateHgvsCodingDuplication(hgvsCoding, genBankTranscript);
                 return;
             }
             
@@ -48,31 +49,61 @@ namespace NeoMutalyzerShared.Validation
             if (!isSilentVariant && !isDelOrDelIns && hgvsRef != bases) result.HasHgvsCodingRefAlleleError = true;
 
             // check the expected position. We need to take into account that some CDS need to be rotated outside.
-            if (!overlapsIntronAndExon && !isSpliceVariant && expectedRightCdsPos != null && isCoding &&
-                !hgvsInterval.Equals(expectedRightCdsPos)) result.HasHgvsCodingPositionError = true;
+            if (!overlapsIntronAndExon  && !isSpliceVariant && expectedRightCdsPos != null && isCoding &&
+                !potentialCdsTruncation && !hgvsInterval.Equals(expectedRightCdsPos)) 
+                result.HasHgvsCodingPositionError = true;
         }
 
-        private static void ValidateHgvsCodingInsertion(this ValidationResult result, string hgvsCoding, Interval codingRegion)
+        private static void ValidateHgvsCodingInsertion(this ValidationResult result, string hgvsCoding,
+            IGenBankTranscript genBankTranscript)
         {
-            (CodingInterval hgvsInterval, _, _, bool isCoding) = HgvsCodingParser.Parse(hgvsCoding);
-            
+            (CodingInterval hgvsInterval, _, string hgvsAlt, bool isCoding) = HgvsCodingParser.Parse(hgvsCoding);
+
             // we can't do much for intronic positions
             if (hgvsInterval.Start.Offset != 0 || hgvsInterval.End.Offset != 0) return;
-            
-            // if our variant is beyond the coding end or has a negative start position, convert to cDNA
-            if (isCoding && IsCdnaSwitchNeeded(hgvsInterval))
-            {
-                if (HasConflictingInfo(hgvsInterval))
-                {
-                    result.HasHgvsCodingBeforeCdsAndAfterCds = true;
-                    return;
-                }                
-                
-                SwitchToCdnaSequence(ref hgvsInterval, codingRegion);
-            }
 
+            if (isCoding) SwitchToCdnaSequence(ref hgvsInterval, genBankTranscript.CodingRegion);
+
+            // check the bases before or after to see if this is a duplication
+            (string basesBeforeIns, string basesAfterIns) = GetBasesBeforeAndAfterIns(hgvsInterval, genBankTranscript, hgvsAlt.Length);
+            if (basesBeforeIns == hgvsAlt || basesAfterIns == hgvsAlt) result.HasHgvsCodingInsToDupError = true;
+
+            // check that insertion coordinates are consecutive
             int diff = hgvsInterval.End.Position - hgvsInterval.Start.Position;
             if (diff != 1) result.HasHgvsCodingInsPositionError = true;
+        }
+
+        private static void ValidateHgvsCodingDuplication(this ValidationResult result, string hgvsCoding,
+            IGenBankTranscript genBankTranscript)
+        {
+            (CodingInterval hgvsInterval, _, _, bool isCoding) = HgvsCodingParser.Parse(hgvsCoding);
+
+            // we can't do much for intronic positions
+            if (hgvsInterval.Start.Offset != 0 || hgvsInterval.End.Offset != 0) return;
+
+            if (isCoding) SwitchToCdnaSequence(ref hgvsInterval, genBankTranscript.CodingRegion);
+
+            var    dupInterval = new Interval(hgvsInterval.Start.Position, hgvsInterval.End.Position);
+            string hgvsAlt     = genBankTranscript.GetCdna(dupInterval.Start, dupInterval.End);
+
+            Interval rightDupInterval = VariantRotator.Right(dupInterval, "", hgvsAlt, VariantType.insertion, 
+                genBankTranscript.CdnaSequence).ShiftedPosition;
+
+            if (dupInterval.Start != rightDupInterval.Start) result.HasHgvsCodingDupPositionError = true;
+        }
+
+        private static (string BeforeBases, string AfterBases) GetBasesBeforeAndAfterIns(CodingInterval hgvsInterval,
+            IGenBankTranscript genBankTranscript, int numBases)
+        {
+            int beforeStart = hgvsInterval.Start.Position - numBases + 1;
+            int beforeEnd   = hgvsInterval.Start.Position;
+            int afterStart  = hgvsInterval.End.Position;
+            int afterEnd    = hgvsInterval.End.Position + numBases - 1;
+
+            string before = genBankTranscript.GetCdna(beforeStart, beforeEnd);
+            string after  = genBankTranscript.GetCdna(afterStart,  afterEnd);
+
+            return (before, after);
         }
 
         private static bool HasConflictingInfo(CodingInterval interval) =>
