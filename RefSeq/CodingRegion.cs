@@ -1,8 +1,12 @@
-﻿namespace RefSeq
+﻿using System.ComponentModel;
+
+namespace RefSeq
 {
     public sealed class CodingRegion
     {
+        [DefaultValue(-1)]
         public readonly int start;
+        [DefaultValue(-1)]
         public readonly int end;
         public readonly int cdnaStart;
         public readonly int cdnaEnd;

@@ -19,14 +19,14 @@ namespace NeoMutalyzerGeneFilter
             if (args.Length != 4)
             {
                 string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
-                Console.WriteLine($"{programName} <GenBank data path> <reference path> <Nirvana JSON path> <gene ID path>");
+                Console.WriteLine($"{programName} <RefSeq JSON path> <reference path> <Nirvana JSON path> <gene ID path>");
                 Environment.Exit(1);
             }
 
-            string transcriptDataPath = args[0];
-            string referencePath      = args[1];
-            string nirvanaJsonPath    = args[2];
-            string geneIdPath         = args[3];
+            string refseqJsonPath  = args[0];
+            string referencePath   = args[1];
+            string nirvanaJsonPath = args[2];
+            string geneIdPath      = args[3];
             
             var benchmark = new Benchmark();
 
@@ -36,7 +36,7 @@ namespace NeoMutalyzerGeneFilter
             Console.WriteLine($"{refNameToChromosome.Count:N0} loaded.");
             
             Console.Write("- loading transcripts... ");
-            Dictionary<string, GenBankTranscript> idToTranscript = GenBankDataReader.Load(transcriptDataPath);
+            Dictionary<string, RefSeq.ITranscript> idToTranscript = GenBankDataReader.Load(refseqJsonPath);
             Console.WriteLine($"{idToTranscript.Count:N0} loaded.");
             
             Console.Write("- loading Entrez gene IDs... ");

@@ -18,13 +18,13 @@ namespace NeoMutalyzer
             if (args.Length != 3)
             {
                 string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
-                Console.WriteLine($"{programName} <GenBank data path> <reference path> <Nirvana JSON path>");
+                Console.WriteLine($"{programName} <RefSeq JSON path> <reference path> <Nirvana JSON path>");
                 Environment.Exit(1);
             }
 
-            string transcriptDataPath = args[0];
-            string referencePath      = args[1];
-            string nirvanaJsonPath    = args[2];
+            string refseqJsonPath  = args[0];
+            string referencePath   = args[1];
+            string nirvanaJsonPath = args[2];
             
             var benchmark = new Benchmark();
 
@@ -34,7 +34,7 @@ namespace NeoMutalyzer
             Console.WriteLine($"{refNameToChromosome.Count:N0} loaded.");
             
             Console.Write("- loading transcripts... ");
-            Dictionary<string, GenBankTranscript> idToTranscript = GenBankDataReader.Load(transcriptDataPath);
+            Dictionary<string, RefSeq.ITranscript> idToTranscript = GenBankDataReader.Load(refseqJsonPath);
             Console.WriteLine($"{idToTranscript.Count:N0} loaded.");
 
             using var parser = new NirvanaJsonParser(FileUtilities.GetReadStream(nirvanaJsonPath), refNameToChromosome);

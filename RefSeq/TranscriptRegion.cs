@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -9,7 +10,9 @@ namespace RefSeq
         [JsonConverter(typeof(StringEnumConverter))]
         public readonly TranscriptRegionType type;
         public readonly ushort               id;
+        [DefaultValue(-1)]
         public readonly int                  start;
+        [DefaultValue(-1)]
         public readonly int                  end;
         public readonly int                  cdnaStart;
         public readonly int                  cdnaEnd;

@@ -1,5 +1,4 @@
 ﻿using NeoMutalyzerShared;
-using NeoMutalyzerShared.GenBank;
 using NeoMutalyzerShared.Validation;
 using Xunit;
 
@@ -16,10 +15,10 @@ namespace UnitTests.Validation
             var cdnaSequence = new string('N', 1000);
             var cdsSequence  = new string('N', 450);
 
-            var genbankTranscript =
-                new GenBankTranscript("NM_001346067.1", null, cdnaSequence, cdsSequence, null, null);
+            var refseqTranscript = new RefSeq.Transcript("NM_001346067.1", null, null, cdnaSequence, cdsSequence, null,
+                null, 0, null);
 
-            result.ValidateCdnaPosition(genbankTranscript, cdnaPos, cdsPos, "AAA");
+            result.ValidateCdnaPosition(refseqTranscript, cdnaPos, cdsPos, "AAA");
 
             Assert.True(result.HasErrors);
             Assert.True(result.HasInvalidCdsPosition);
@@ -32,9 +31,10 @@ namespace UnitTests.Validation
             var aminoAcidPos      = new Interval(203, 203);
             var aminoAcidSequence = new string('N', 149);
 
-            var genbankTranscript = new GenBankTranscript("NM_001346067.1", null, null, null, aminoAcidSequence, null);
+            var refseqTranscript = new RefSeq.Transcript("NM_001346067.1", null, null, null, null, aminoAcidSequence,
+                null, 0, null);
 
-            result.ValidateAminoAcidPosition(genbankTranscript, aminoAcidPos, "K");
+            result.ValidateAminoAcidPosition(refseqTranscript, aminoAcidPos, "K");
 
             Assert.True(result.HasErrors);
             Assert.True(result.HasInvalidProteinPosition);

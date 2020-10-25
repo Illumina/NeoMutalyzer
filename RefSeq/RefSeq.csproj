@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <OutputPath>..\bin\$(Configuration)</OutputPath>
     </PropertyGroup>
-
     <ItemGroup>
       <ProjectReference Include="..\ReferenceSequence\ReferenceSequence.csproj" />
     </ItemGroup>
-
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
-
 </Project>

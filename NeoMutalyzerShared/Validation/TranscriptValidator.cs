@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using NeoMutalyzerShared.Annotated;
-using NeoMutalyzerShared.GenBank;
 using NeoMutalyzerShared.Statistics;
 
 namespace NeoMutalyzerShared.Validation
@@ -24,7 +23,7 @@ namespace NeoMutalyzerShared.Validation
             CanonicalStatistics.Display();
         }
 
-        public static void Validate(Position position, Dictionary<string, GenBankTranscript> idToTranscript,
+        public static void Validate(Position position, Dictionary<string, RefSeq.ITranscript> idToTranscript,
             Func<string, bool> FilterGene)
         {
             var result = new ValidationResult();
@@ -35,44 +34,44 @@ namespace NeoMutalyzerShared.Validation
                 {
                     if (transcript.Id.StartsWith("X") || FilterGene(transcript.GeneId)) continue;
                     
-                    if (!idToTranscript.TryGetValue(transcript.Id, out GenBankTranscript gbTranscript))
+                    if (!idToTranscript.TryGetValue(transcript.Id, out RefSeq.ITranscript refseqTranscript))
                     {
                         Console.WriteLine($"ERROR: Unable to find the following transcript: {transcript.Id}");
                         Environment.Exit(1);
                     }
 
                     result.Reset();
-                    ValidateTranscript(gbTranscript, transcript, variant.Type, result);
+                    ValidateTranscript(refseqTranscript, transcript, variant.Type, result);
                     
                     if (result.HasErrors)
                     {
-                        Statistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, true);
-                        if (transcript.IsCanonical) CanonicalStatistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, true);
-                        result.DumpErrors(variant.VID, transcript.Id, gbTranscript.GeneSymbol, transcript.HgvsCoding, transcript.HgvsProtein,
+                        Statistics.Add(variant.VID, transcript.Id, refseqTranscript.geneSymbol, true);
+                        if (transcript.IsCanonical) CanonicalStatistics.Add(variant.VID, transcript.Id, refseqTranscript.geneSymbol, true);
+                        result.DumpErrors(variant.VID, transcript.Id, refseqTranscript.geneSymbol, transcript.HgvsCoding, transcript.HgvsProtein,
                             transcript.Json);
                     }
 
-                    Statistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, false);
-                    if (transcript.IsCanonical) CanonicalStatistics.Add(variant.VID, transcript.Id, gbTranscript.GeneSymbol, false);
+                    Statistics.Add(variant.VID, transcript.Id, refseqTranscript.geneSymbol, false);
+                    if (transcript.IsCanonical) CanonicalStatistics.Add(variant.VID, transcript.Id, refseqTranscript.geneSymbol, false);
                 }
             }
         }
 
-        private static void ValidateTranscript(IGenBankTranscript gbTranscript, Transcript transcript,
+        private static void ValidateTranscript(RefSeq.ITranscript refseqTranscript, Transcript transcript,
             VariantType variantType, ValidationResult result)
         {
-            result.ValidateCdnaPosition(gbTranscript, transcript.CdnaPos, transcript.CdsPos, transcript.RefAllele);
-            result.ValidateAminoAcidPosition(gbTranscript, transcript.AminoAcidPos, transcript.RefAminoAcids);
+            result.ValidateCdnaPosition(refseqTranscript, transcript.CdnaPos, transcript.CdsPos, transcript.RefAllele);
+            result.ValidateAminoAcidPosition(refseqTranscript, transcript.AminoAcidPos, transcript.RefAminoAcids);
 
             Interval expectedRightCdsPos = VariantRotator.Right(transcript.CdsPos, transcript.RefAllele,
-                transcript.AltAllele, variantType, gbTranscript.CdsSequence).ShiftedPosition;
+                transcript.AltAllele, variantType, refseqTranscript.cdsSequence).ShiftedPosition;
 
             bool potentialCdsTruncation = transcript.CdsPos != null && transcript.CdsPos.Start == 1;
 
-            result.ValidateHgvsCoding(gbTranscript, transcript.HgvsCoding, expectedRightCdsPos, variantType,
+            result.ValidateHgvsCoding(refseqTranscript, transcript.HgvsCoding, expectedRightCdsPos, variantType,
                 transcript.OverlapsIntronAndExon, transcript.IsSpliceVariant, potentialCdsTruncation);
             
-            result.ValidateHgvsProtein(gbTranscript, transcript.HgvsProtein);
+            result.ValidateHgvsProtein(refseqTranscript, transcript.HgvsProtein);
         }
     }
 }

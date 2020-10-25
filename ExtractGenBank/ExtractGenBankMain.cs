@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using ExtractGenBank.GenBank;
 using IO;
-using NeoMutalyzerShared.GenBank;
 using Newtonsoft.Json;
 
 namespace ExtractGenBank
@@ -38,13 +37,14 @@ namespace ExtractGenBank
         {
             var serializer = new JsonSerializer
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting        = Formatting.Indented
+                NullValueHandling    = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                Formatting           = Formatting.Indented
             };
 
             using StreamWriter writer = FileUtilities.GzipWriter(filePath);
             serializer.Serialize(writer,
-                transcripts.OrderBy(x => x.chromosome.Index).ThenBy(x => x.start).ThenBy(x => x.end));
+                transcripts.OrderBy(x => x.id.Length).ThenBy(x => x.id));
         }
 
         private static List<RefSeq.Transcript> LoadTranscripts(string filePath)

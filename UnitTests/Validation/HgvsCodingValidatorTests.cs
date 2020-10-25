@@ -1,7 +1,6 @@
 ﻿using Moq;
 using NeoMutalyzerShared;
 using NeoMutalyzerShared.Annotated;
-using NeoMutalyzerShared.GenBank;
 using NeoMutalyzerShared.Validation;
 using Xunit;
 
@@ -9,15 +8,18 @@ namespace UnitTests.Validation
 {
     public class HgvsCodingValidatorTests
     {
+        private static RefSeq.Transcript GetTranscript(string id, string cdnaSequence, RefSeq.CodingRegion codingRegion) =>
+            new RefSeq.Transcript(id, null, null, cdnaSequence, null, null, codingRegion, 0, null);
+
         [Fact]
         public void ValidateHgvsCoding_NM_000314_6_956_959delACTT_IncorrectPosition()
         {
             var result       = new ValidationResult();
             var rightCdsPos  = new Interval(955, 958);
-            var codingRegion = new Interval(81,  2126);
+            var codingRegion = new RefSeq.CodingRegion(-1,-1, 81,  2126);
 
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCds(956, 959)).Returns("CTTT");
 
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_000314.6:c.956_959delACTT", rightCdsPos,
@@ -33,10 +35,10 @@ namespace UnitTests.Validation
         {
             var result       = new ValidationResult();
             var rightCdsPos  = new Interval(955, 958);
-            var codingRegion = new Interval(81,  2126);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 81,  2126);
 
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCds(956, 959)).Returns("CTTT");
 
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_000314.6:c.956_959del", rightCdsPos,
@@ -51,10 +53,10 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NM_152486_2_PastCodingRegion_Correct()
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(81, 2126);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 81, 2126);
 
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCdna(2133, 2133)).Returns("C");
 
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_152486.2:c.*7C>T", null, VariantType.SNV, false, false, false);
@@ -66,10 +68,10 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NM_199454_2_PastCodingRegion_Correct()
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(83, 3856);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 83, 3856);
 
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCdna(3852, 3857)).Returns("TCTGAC");
 
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_199454.2:c.3770_*1delTCTGAC", null, VariantType.deletion, false, false, false);
@@ -81,10 +83,10 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NM_006983_1_PastCodingRegion_Correct()
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(39, 1211);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 39, 1211);
 
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCdna(1211, 1212)).Returns("AG");
 
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_006983.1:c.1173_*1delAG", null, VariantType.deletion, false, false, false);
@@ -96,10 +98,10 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NM_032129_2_BeforeCodingRegion_Correct()
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(36, 1871);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 36, 1871);
 
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCdna(1, 1)).Returns("G");
 
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_032129.2:c.-35G>C", null, VariantType.deletion, false, false, false);
@@ -111,12 +113,12 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NM_001310156_1_PastEnd_IncorrectPosition()
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(190, 1569);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 190, 1569);
 
-            var genbankTranscript =
-                new GenBankTranscript("NM_001310156.1", null, new string('N', 2155), null, null, codingRegion);
+            RefSeq.Transcript refseqTranscript = GetTranscript("NM_001310156.1", new string('N', 2155), codingRegion);
 
-            result.ValidateHgvsCoding(genbankTranscript, "NM_001310156.1:c.*595A>G", null, VariantType.deletion, false, false, false);
+            result.ValidateHgvsCoding(refseqTranscript, "NM_001310156.1:c.*595A>G", null, VariantType.deletion, false,
+                false, false);
 
             Assert.True(result.HasErrors);
             Assert.True(result.HasHgvsCodingRefAlleleError);
@@ -126,12 +128,12 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NM_024813_2_PastCodingRegion_BeforeCodingRegion_InvalidCombo()
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(110, 1948);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 110, 1948);
 
-            var genbankTranscript =
-                new GenBankTranscript("NM_024813.2", null, new string('N', 3112), null, null, codingRegion);
+            RefSeq.Transcript refseqTranscript = GetTranscript("NM_024813.2", new string('N', 3112), codingRegion);
 
-            result.ValidateHgvsCoding(genbankTranscript, "NM_024813.2:c.*-2898A>G", null, VariantType.deletion, false, false, false);
+            result.ValidateHgvsCoding(refseqTranscript, "NM_024813.2:c.*-2898A>G", null, VariantType.deletion, false,
+                false, false);
 
             Assert.True(result.HasErrors);
             Assert.True(result.HasHgvsCodingBeforeCdsAndAfterCds);
@@ -142,10 +144,10 @@ namespace UnitTests.Validation
         {
             var result       = new ValidationResult();
             var rightCdsPos  = new Interval(791, 797);
-            var codingRegion = new Interval(150, 488);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 150, 488);
 
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCds(801, 809)).Returns("TGATGAAGA");
 
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_001293228.1:c.801_809delTGATGAAGA", rightCdsPos,
@@ -159,10 +161,10 @@ namespace UnitTests.Validation
         {
             var result       = new ValidationResult();
             var rightCdsPos  = new Interval(702, 702);
-            var codingRegion = new Interval(194, 2407);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 194, 2407);
         
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCds(701, 701)).Returns("A");
         
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_001203248.1:c.701del", rightCdsPos,
@@ -175,10 +177,10 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NR_136542_1_NonConsecutivePositions_IncorrectPosition()
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(-1, -1);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, -1, -1);
         
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
         
             result.ValidateHgvsCoding(mockTranscript.Object, "NR_136542.1:n.3433_3435insC", null,
                 VariantType.insertion, false, false, false);
@@ -192,10 +194,10 @@ namespace UnitTests.Validation
         {
             var result       = new ValidationResult();
             var rightCdsPos  = new Interval(1, 14);
-            var codingRegion = new Interval(215, 855);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 215, 855);
         
-            var mockTranscript = new Mock<IGenBankTranscript>();
-            mockTranscript.SetupGet(x => x.CodingRegion).Returns(codingRegion);
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
+            mockTranscript.SetupGet(x => x.codingRegion).Returns(codingRegion);
             mockTranscript.Setup(x => x.GetCds(1, 17)).Returns("ATGCCCCGGAGGGCGGA");
         
             result.ValidateHgvsCoding(mockTranscript.Object, "NM_000551.3:c.1_17del", rightCdsPos,
@@ -217,13 +219,12 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NM_021960_4_DetectDuplication(string hgvsCoding, bool expectedIsDupe)
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(209, 1261);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 209, 1261);
 
             string cdnaSequence = new string('N', 2196) + "TTATCTGATTTTGGTAAGTATTCCTTAGATAGGTTTTTCTTTGAAAACCT";
-            var gbTranscript =
-                new GenBankTranscript("NM_021960.4", "NM_021960.4", cdnaSequence, null, null, codingRegion);
+            RefSeq.Transcript refseqTranscript = GetTranscript("NM_021960.4", cdnaSequence, codingRegion);
 
-            result.ValidateHgvsCoding(gbTranscript, hgvsCoding, null, VariantType.insertion, false, false, false);
+            result.ValidateHgvsCoding(refseqTranscript, hgvsCoding, null, VariantType.insertion, false, false, false);
 
             if (expectedIsDupe)
             {
@@ -246,14 +247,14 @@ namespace UnitTests.Validation
         public void ValidateHgvsCoding_NM_021960_4_CheckDuplicationPosition(string hgvsCoding, bool expectedPosition)
         {
             var result       = new ValidationResult();
-            var codingRegion = new Interval(209, 1261);
+            var codingRegion = new RefSeq.CodingRegion(-1, -1, 209, 1261);
 
             const string cdnaSequence =
                 "GCGCAACCCTCCGGAAGCTGCCGCCCCTTTCCCCTTTTATGGGAATACTTTTTTTAAAAAAAAAGAGTTCGCTGGCGCCACCCCGTAGGACTGGCCGCCCTAAAACCGTGATAAAGGAGCTGCTCGCCACTTCTCACTTCCGCTTCCTTCCAGTAAGGAGTCGGGGTCTTCCCCAGTTTTCTCAGCCAGGCGGCGGCGGCGACTGGCAATGTTTGGCCTCAAAAGAAACGCGGTAATCGGACTCAACCTCTACTGTGGGGGGGCCGGCTTGGGGGCCGGCAGCGGCGGCGCCACCCGCCCGGGAGGGCGACTTTTGGCTACGGAGAAGGAGGCCTCGGCCCGGCGAGAGATAGGGGGAGGGGAGGCCGGCGCGGTGATTGGCGGAAGCGCCGGCGCAAGCCCCCCGTCCACCCTCACGCCAGACTCCCGGAGGGTCGCGCGGCCGCCGCCCATTGGCGCCGAGGTCCCCGACGTCACCGCGACCCCCGCGAGGCTGCTTTTCTTCGCGCCCACCCGCCGCGCGGCGCCGCTTGAGGAGATGGAAGCCCCGGCCGCTGACGCCATCATGTCGCCCGAAGAGGAGCTGGACGGGTACGAGCCGGAGCCTCTCGGGAAGCGGCCGGCTGTCCTGCCGCTGCTGGAGTTGGTCGGGGAATCTGGTAATAACACCAGTACGGACGGGTCACTACCCTCGACGCCGCCGCCAGCAGAGGAGGAGGAGGACGAGTTGTACCGGCAGTCGCTGGAGATTATCTCTCGGTACCTTCGGGAGCAGGCCACCGGCGCCAAGGACACAAAGCCAATGGGCAGGTCTGGGGCCACCAGCAGGAAGGCGCTGGAGACCTTACGACGGGTTGGGGATGGCGTGCAGCGCAACCACGAGACGGCCTTCCAAGGCATGCTTCGGAAACTGGACATCAAAAACGAAGACGATGTGAAATCGTTGTCTCGAGTGATGATCCATGTTTTCAGCGACGGCGTAACAAACTGGGGCAGGATTGTGACTCTCATTTCTTTTGGTGCCTTTGTGGCTAAACACTTGAAGACCATAAACCAAGAAAGCTGCATCGAACCATTAGCAGAAAGTATCACAGACGTTCTCGTAAGGACAAAACGGGACTGGCTAGTTAAACAAAGAGGCTGGGATGGGTTTGTGGAGTTCTTCCATGTAGAGGACCTAGAAGGTGGCATCAGGAATGTGCTGCTGGCTTTTGCAGGTGTTGCTGGAGTAGGAGCTGGTTTGGCATATCTAATAAGATAGCCTTACTGTAAGTGCAATAGTTGACTTTTAACCAACCACCACCACCACCAAAACCAGTTTATGCAGTTGGACTCCAAGCTGTAACTTCCTAGAGTTGCACCCTAGCAACCTAGCCAGAAAAGCAAGTGGCAAGAGGATTATGGCTAACAAGAATAAATACATGGGAAGAGTGCTCCCCATTGATTGAAGAGTCACTGTCTGAAAGAAGCAAAGTTCAGTTTCAGCAACAAACAAACTTTGTTTGGGAAGCTATGGAGGAGGACTTTTAGATTTAGTGAAGATGGTAGGGTGGAAAGACTTAATTTCCTTGTTGAGAACAGGAAAGTGGCCAGTAGCCAGGCAAGTCATAGAATTGATTACCCGCCGAATTCATTAATTTACTGTAGTGTTAAGAGAAGCACTAAGAATGCCAGTGACCTGTGTAAAAGTTACAAGTAATAGAACTATGACTGTAAGCCTCAGTACTGTACAAGGGAAGCTTTTCCTCTCTCTAATTAGCTTTCCCAGTATACTTCTTAGAAAGTCCAAGTGTTCAGGACTTTTATACCTGTTATACTTTGGCTTGGTTTCCATGATTCTTACTTTATTAGCCTAGTTTATCACCAATAATACTTGACGGAAGGCTCAGTAATTAGTTATGAATATGGATATCCTCAATTCTTAAGACAGCTTGTAAATGTATTTGTAAAAATTGTATATATTTTTACAGAAAGTCTATTTCTTTGAAACGAAGGAAGTATCGAATTTACATTAGTTTTTTTCATACCCTTTTGAACTTTGCAACTTCCGTAATTAGGAACCTGTTTCTTACAGCTTTTCTATGCTAAACTTTGTTCTGTTCAGTTCTAGAGTGTATACAGAACGAATTGATGTGTAACTGTATGCAGACTGGTTGTAGTGGAACAAATCTGATAACTATGCAGGTTTAAATTTTCTTATCTGATTTTGGTAAGTATTCCTTAGATAGGTTTTTCTTTGAAAACCTGGGATTGAGAGGTTGATGAATGGAAATTCTTTCACTTCATTATATGCAAGTTTTCAATAATTAGGTCTAAGTGGAGTTTTAAGGTTACTGATGACTTACAAATAATGGGCTCTGATTGGGCAATACTCATTTGAGTTCCTTCCATTTGACCTAATTTAACTGGTGAAATTTAAAGTGAATTCATGGGCTCATCTTTAAAGCTTTTACTAAAAGATTTTCAGCTGAATGGAACTCATTAGCTGTGTGCATATAAAAAGATCACATCAGGTGGATGGAGAGACATTTGATCCCTTGTTTGCTTAATAAATTATAAAATGATGGCTTGGAAAAGCAGGCTAGTCTAACCATGGTGCTATTATTAGGCTTGCTTGTTACACACACAGGTCTAAGCCTAGTATGTCAATAAAGCAAATACTTACTGTTTTGTTTCTATTAATGATTCCCAAACCTTGTTGCAAGTTTTTGCATTGGCATCTTTGGATTTCAGTCTTGATGTTTGTTCTATCAGACTTAACCTTTTATTTCCTGTCCTTCCTTGAAATTGCTGATTGTTCTGCTCCCTCTACAGATATTTATATCAATTCCTACAGCTTTCCCCTGCCATCCCTGAACTCTTTCTAGCCCTTTTAGATTTTGGCACTGTGAAACCCCTGCTGGAAACCTGAGTGACCCTCCCTCCCCACCAAGAGTCCACAGACCTTTCATCTTTCACGAACTTGATCCTGTTAGCAGGTGGTAATACCATGGGTGCTGTGACACTAACAGTCATTGAGAGGTGGGAGGAAGTCCCTTTTCCTTGGACTGGTATCTTTTCAACTATTGTTTTATCCTGTCTTTGGGGGCAATGTGTCAAAAGTCCCCTCAGGAATTTTCAGAGGAAAGAACATTTTATGAGGCTTTCTCTAAAGTTTCCTTTGTATAGGAGTATGCTCACTTAAATTTACAGAAAGAGGTGAGCTGTGTTAAACCTCAGAGTTTAAAAGCTACTGATAAACTGAAGAAAGTGTCTATATTGGAACTAGGGTCATTTGAAAGCTTCAGTCTCGGAACATGACCTTTAGTCTGTGGACTCCATTTAAAAATAGGTATGAATAAGATGACTAAGAATGTAATGGGGAAGAACTGCCCTGCCTGCCCATCTCAGAGCCATAAGGTCATCTTTGCTAGAGCTATTTTTACCTATGTATTTATCGTTCTTGATCATAAGCCGCTTATTTATATCATGTATCTCTAAGGACCTAAAAGCACTTTATGTAGTTTTTAATTAATCTTAAGATCTGGTTACGGTAACTAAAAAAGCCTGTCTGCCAAATCCAGTGGAAACAAGTGCATAGATGTGAATTGGTTTTTAGGGGCCCCACTTCCCAATTCATTAGGTATGACTGTGGAAATACAGACAAGGATCTTAGTTGATATTTTGGGCTTGGGGCAGTGAGGGCTTAGGACACCCCAAGTGGTTTGGGAAAGGAGGAGGGGAGTGGTGGGTTTATAGGGGGAGGAGGAGGCAGGTGGTCTAAGTGCTGACTGGCTACGTAGTTCGGGCAAATCCTCCAAAAGGGAAAGGGAGGATTTGCTTAGAAGGATGGCGCTCCCAGTGACTACTTTTTGACTTCTGTTTGTCTTACGCTTCTCTCAGGGAAAAACATGCAGTCCTCTAGTGTTTCATGTACATTCTGTGGGGGGTGAACACCTTGGTTCTGGTTAAACAGCTGTACTTTTGATAGCTGTGCCAGGAAGGGTTAGGACCAACTACAAATTAATGTTGGTTGTCAAATGTAGTGTGTTTCCCTAACTTTCTGTTTTTCCTGAGAAAAAAAAATAAATCTTTTATTCAAATACAGGGAAAAAAAAAAAAAAAAAA";
-            var gbTranscript =
-                new GenBankTranscript("NM_021960.4", "NM_021960.4", cdnaSequence, null, null, codingRegion);
 
-            result.ValidateHgvsCoding(gbTranscript, hgvsCoding, null, VariantType.insertion, false, false, false);
+            RefSeq.Transcript refseqTranscript = GetTranscript("NM_021960.4", cdnaSequence, codingRegion);
+
+            result.ValidateHgvsCoding(refseqTranscript, hgvsCoding, null, VariantType.insertion, false, false, false);
 
             if (expectedPosition)
             {

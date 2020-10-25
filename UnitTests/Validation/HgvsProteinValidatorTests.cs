@@ -1,5 +1,4 @@
 ﻿using Moq;
-using NeoMutalyzerShared.GenBank;
 using NeoMutalyzerShared.Validation;
 using Xunit;
 
@@ -14,7 +13,7 @@ namespace UnitTests.Validation
             // Mutalyzer: NM_001143962.1(CAPN8_v001):c.2101G>A
             //            NM_001143962.1(CAPN8_i001):p.(Val701Met)
             var result         = new ValidationResult();
-            var mockTranscript = new Mock<IGenBankTranscript>();
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
             mockTranscript.Setup(x => x.GetAminoAcids(701, 701)).Returns("V");
 
             result.ValidateHgvsProtein(mockTranscript.Object, "NP_001137434.1:p.(Val701_?_fsTer?)");
@@ -27,7 +26,7 @@ namespace UnitTests.Validation
         public void ValidateHgvsProtein_NP_115505_2_Silent_MultipleRefAA_Correct()
         {
             var result         = new ValidationResult();
-            var mockTranscript = new Mock<IGenBankTranscript>();
+            var mockTranscript = new Mock<RefSeq.ITranscript>();
             mockTranscript.Setup(x => x.GetAminoAcids(525, 525)).Returns("A");
             
             // p.(AlaLeu525=) means that position 525 will be A
@@ -47,13 +46,10 @@ namespace UnitTests.Validation
 
             const string aaSequence =
                 "MSEGDSVGESVHGKPSVVYRFFTRLGQIYQSWLDKSTPYTAVRWVVTLGLSFVYMIRVYLLQGWYIVTYALGIYHLNLFIAFLSPKVDPSLMEDSDDGPSLPTKQNEEFRPFIRRLPEFKFWHAATKGILVAMVCTFFDAFNVPVFWPILVMYFIMLFCITMKRQIKHMIKYRYIPFTHGKRRYRGKEDAGKAFAS*";
-            var genbankTranscript = new GenBankTranscript(null, null, null, null, aaSequence, null);
-
-            // var mockTranscript = new Mock<IGenBankTranscript>();
-            // mockTranscript.Setup(x => x.GetAminoAcids(197, 197)).Returns("*");
+            var refseqTranscript = new RefSeq.Transcript("NM_007033.4", null, null, null, null, aaSequence, null, 0, null);
 
             // 1-2334561-T-A   NM_007033.4     NM_007033.4:c.589T>A            Invalid protein position        Protein RefAllele
-            result.ValidateHgvsProtein(genbankTranscript, "NP_008964.3:p.(Ter197LysextTer4)");
+            result.ValidateHgvsProtein(refseqTranscript, "NP_008964.3:p.(Ter197LysextTer4)");
 
             Assert.False(result.HasErrors);
         }

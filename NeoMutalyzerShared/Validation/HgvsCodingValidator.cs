@@ -1,20 +1,18 @@
-﻿using System;
-using NeoMutalyzerShared.Annotated;
-using NeoMutalyzerShared.GenBank;
+﻿using NeoMutalyzerShared.Annotated;
 using NeoMutalyzerShared.HgvsParsing;
 
 namespace NeoMutalyzerShared.Validation
 {
     public static class HgvsCodingValidator
     {
-        public static void ValidateHgvsCoding(this ValidationResult result, IGenBankTranscript genBankTranscript,
+        public static void ValidateHgvsCoding(this ValidationResult result, RefSeq.ITranscript refseqTranscript,
             string hgvsCoding, Interval expectedRightCdsPos, VariantType variantType, bool overlapsIntronAndExon,
             bool isSpliceVariant, bool potentialCdsTruncation)
         {
             if (variantType == VariantType.insertion)
             {
-                if (hgvsCoding.Contains("ins")) result.ValidateHgvsCodingInsertion(hgvsCoding, genBankTranscript);
-                if (hgvsCoding.Contains("dup")) result.ValidateHgvsCodingDuplication(hgvsCoding, genBankTranscript);
+                if (hgvsCoding.Contains("ins")) result.ValidateHgvsCodingInsertion(hgvsCoding, refseqTranscript);
+                if (hgvsCoding.Contains("dup")) result.ValidateHgvsCodingDuplication(hgvsCoding, refseqTranscript);
                 return;
             }
             
@@ -33,14 +31,14 @@ namespace NeoMutalyzerShared.Validation
                     return;
                 }                
                 
-                SwitchToCdnaSequence(ref hgvsInterval, genBankTranscript.CodingRegion);
+                SwitchToCdnaSequence(ref hgvsInterval, refseqTranscript.codingRegion);
                 isCoding = false;
             }
 
             // we need to use the cDNA sequence if we encounter HGVS n. notation
             string bases = isCoding
-                ? genBankTranscript.GetCds(hgvsInterval.Start.Position, hgvsInterval.End.Position)
-                : genBankTranscript.GetCdna(hgvsInterval.Start.Position, hgvsInterval.End.Position);
+                ? refseqTranscript.GetCds(hgvsInterval.Start.Position, hgvsInterval.End.Position)
+                : refseqTranscript.GetCdna(hgvsInterval.Start.Position, hgvsInterval.End.Position);
 
             bool isRefAlleleEmpty = string.IsNullOrEmpty(hgvsRef);
             bool isSilentVariant  = isRefAlleleEmpty && string.IsNullOrEmpty(hgvsAlt);
@@ -55,17 +53,17 @@ namespace NeoMutalyzerShared.Validation
         }
 
         private static void ValidateHgvsCodingInsertion(this ValidationResult result, string hgvsCoding,
-            IGenBankTranscript genBankTranscript)
+            RefSeq.ITranscript refseqTranscript)
         {
             (CodingInterval hgvsInterval, _, string hgvsAlt, bool isCoding) = HgvsCodingParser.Parse(hgvsCoding);
 
             // we can't do much for intronic positions
             if (hgvsInterval.Start.Offset != 0 || hgvsInterval.End.Offset != 0) return;
 
-            if (isCoding) SwitchToCdnaSequence(ref hgvsInterval, genBankTranscript.CodingRegion);
+            if (isCoding) SwitchToCdnaSequence(ref hgvsInterval, refseqTranscript.codingRegion);
 
             // check the bases before or after to see if this is a duplication
-            (string basesBeforeIns, string basesAfterIns) = GetBasesBeforeAndAfterIns(hgvsInterval, genBankTranscript, hgvsAlt.Length);
+            (string basesBeforeIns, string basesAfterIns) = GetBasesBeforeAndAfterIns(hgvsInterval, refseqTranscript, hgvsAlt.Length);
             if (basesBeforeIns == hgvsAlt || basesAfterIns == hgvsAlt) result.HasHgvsCodingInsToDupError = true;
 
             // check that insertion coordinates are consecutive
@@ -74,34 +72,34 @@ namespace NeoMutalyzerShared.Validation
         }
 
         private static void ValidateHgvsCodingDuplication(this ValidationResult result, string hgvsCoding,
-            IGenBankTranscript genBankTranscript)
+            RefSeq.ITranscript refseqTranscript)
         {
             (CodingInterval hgvsInterval, _, _, bool isCoding) = HgvsCodingParser.Parse(hgvsCoding);
 
             // we can't do much for intronic positions
             if (hgvsInterval.Start.Offset != 0 || hgvsInterval.End.Offset != 0) return;
 
-            if (isCoding) SwitchToCdnaSequence(ref hgvsInterval, genBankTranscript.CodingRegion);
+            if (isCoding) SwitchToCdnaSequence(ref hgvsInterval, refseqTranscript.codingRegion);
 
             var    dupInterval = new Interval(hgvsInterval.Start.Position, hgvsInterval.End.Position);
-            string hgvsAlt     = genBankTranscript.GetCdna(dupInterval.Start, dupInterval.End);
+            string hgvsAlt     = refseqTranscript.GetCdna(dupInterval.Start, dupInterval.End);
 
             Interval rightDupInterval = VariantRotator.Right(dupInterval, "", hgvsAlt, VariantType.insertion, 
-                genBankTranscript.CdnaSequence).ShiftedPosition;
+                refseqTranscript.cdnaSequence).ShiftedPosition;
 
             if (dupInterval.Start != rightDupInterval.Start) result.HasHgvsCodingDupPositionError = true;
         }
 
         private static (string BeforeBases, string AfterBases) GetBasesBeforeAndAfterIns(CodingInterval hgvsInterval,
-            IGenBankTranscript genBankTranscript, int numBases)
+            RefSeq.ITranscript refseqTranscript, int numBases)
         {
             int beforeStart = hgvsInterval.Start.Position - numBases + 1;
             int beforeEnd   = hgvsInterval.Start.Position;
             int afterStart  = hgvsInterval.End.Position;
             int afterEnd    = hgvsInterval.End.Position + numBases - 1;
 
-            string before = genBankTranscript.GetCdna(beforeStart, beforeEnd);
-            string after  = genBankTranscript.GetCdna(afterStart,  afterEnd);
+            string before = refseqTranscript.GetCdna(beforeStart, beforeEnd);
+            string after  = refseqTranscript.GetCdna(afterStart,  afterEnd);
 
             return (before, after);
         }
@@ -116,7 +114,7 @@ namespace NeoMutalyzerShared.Validation
 
         private static bool IsCdnaSwitchNeeded(PositionOffset po) => po.BeyondCodingEnd || po.Position < 1;
 
-        private static void SwitchToCdnaSequence(ref CodingInterval hgvsInterval, Interval codingRegion)
+        private static void SwitchToCdnaSequence(ref CodingInterval hgvsInterval, RefSeq.CodingRegion codingRegion)
         {
             PositionOffset start = hgvsInterval.Start.ConvertToCdna(codingRegion);
             PositionOffset end   = hgvsInterval.End.ConvertToCdna(codingRegion);

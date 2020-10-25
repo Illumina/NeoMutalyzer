@@ -74,8 +74,9 @@ namespace ExtractGenBank.GenBank
             string         id  = GetVersion();
             if (id == null) return null;
             
-            CodingSequence cds  = null;
-            Gene           gene = null;
+            CodingSequence cds   = null;
+            Gene           gene  = null;
+            var            exons = new List<Exon>();
 
             FindFeatures();
 
@@ -87,6 +88,9 @@ namespace ExtractGenBank.GenBank
                 {
                     case CodingSequence cdsFeature:
                         cds = cdsFeature;
+                        break;
+                    case Exon exonFeature:
+                        exons.Add(exonFeature);
                         break;
                     case Gene geneFeature:
                         gene = geneFeature;
@@ -111,8 +115,10 @@ namespace ExtractGenBank.GenBank
                 cdsSequence  = cdnaSequence.Substring(cds.Start - 1, cds.End - cds.Start + 1);
             }
 
+            RefSeq.TranscriptRegion[] transcriptRegions = exons.ToTranscriptRegions();
+
             return new RefSeq.Transcript(id, proteinId, gene.GeneSymbol, cdnaSequence, cdsSequence, aaSeqence,
-                codingRegion, startExonPhase);
+                codingRegion, startExonPhase, transcriptRegions);
         }
 
         private void FindFeatures()
@@ -165,7 +171,7 @@ namespace ExtractGenBank.GenBank
             {
                 CdsFeatureTag            => GetCds(),
                 CRegionFeatureTag        => SkipFeature(),
-                ExonFeatureTag           => SkipFeature(),
+                ExonFeatureTag           => GetExon(),
                 GeneFeatureTag           => GetGene(),
                 JSegmentFeatureTag       => SkipFeature(),
                 MatPeptideFeatureTag     => SkipFeature(),
@@ -206,6 +212,12 @@ namespace ExtractGenBank.GenBank
             GenBankData data = _parser.GetFeature();
             return new CodingSequence(data.Interval, data.GeneSymbol, data.LocusTag, data.GeneId, data.Regions,
                 data.Note, data.CodonStart, data.Product, data.ProteinId, data.Translation + '*');
+        }
+        
+        private IFeature GetExon()
+        {
+            GenBankData data = _parser.GetFeature();
+            return new Exon(data.Interval);
         }
 
         private IFeature GetGene()

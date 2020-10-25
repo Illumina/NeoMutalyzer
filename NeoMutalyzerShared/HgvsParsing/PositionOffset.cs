@@ -28,11 +28,11 @@ namespace NeoMutalyzerShared.HgvsParsing
             }
         }
 
-        public PositionOffset ConvertToCdna(Interval codingRegion)
+        public PositionOffset ConvertToCdna(RefSeq.CodingRegion codingRegion)
         {
-            if (BeyondCodingEnd) return new PositionOffset(Position + codingRegion.End, Offset);
+            if (BeyondCodingEnd) return new PositionOffset(Position + codingRegion.cdnaEnd, Offset);
 
-            int offset = codingRegion.Start - 1;
+            int offset = codingRegion.cdnaStart - 1;
             
             // correction since we can never have a Position equal to zero
             if (Position < 1) offset++;
