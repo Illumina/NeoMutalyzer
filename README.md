@@ -40,6 +40,8 @@ NeoMutalyzer outputs a number of error categories:
 |--------------------------|------------------------------------------------------------------------------------------------| 
 | HGVS c. RefAllele        | The reference bases in the HGVS notation don't match the transcript bases at the HGVS position | 
 | HGVS c. Position         | The right aligned CDS coordinate doesn't match the position in the HGVS notation               | 
+| HGVS c. InsToDup         | This insertion should be converted to a duplication                                            |
+| HGVS c. Dup Position     | The duplication is not fully right aligned                                                     |
 | HGVS c. Ins Position     | The positions listed in the insertion are not consecutive numbers                              |
 | HGVS c. CDS range        | The HGVS notation indicates that the coordinate is both before the coding region and after it  | 
 | HGVS p. RefAllele        | The reference AA in the HGVS notation don't match the AAs at the HGVS position                 | 
