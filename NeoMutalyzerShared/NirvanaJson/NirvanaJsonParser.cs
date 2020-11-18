@@ -148,13 +148,24 @@ namespace NeoMutalyzerShared.NirvanaJson
             (string refAllele, string altAllele)         = GetAllelesFromCodons(codons);
             (string refAminoAcids, string altAminoAcids) = GetAllelesFromAminoAcids(aminoAcids);
 
-            Interval cdnaPos      = GetIntervalFromRange(cdnaRange);
-            Interval cdsPos       = GetIntervalFromRange(cdsRange);
-            Interval aminoAcidPos = GetIntervalFromRange(aaRange);
-
-            return new Transcript(id, geneId, refAllele, altAllele, refAminoAcids, altAminoAcids, cdnaPos, cdsPos,
-                aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, isCanonical, isSpliceVariant,
-                transcript.ToString(Formatting.None));
+            try
+            {
+                Interval cdnaPos      = GetIntervalFromRange(cdnaRange);
+                Interval cdsPos       = GetIntervalFromRange(cdsRange);
+                Interval aminoAcidPos = GetIntervalFromRange(aaRange);
+                
+                return new Transcript(id, geneId, refAllele, altAllele, refAminoAcids, altAminoAcids, cdnaPos, cdsPos,
+                    aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, isCanonical, isSpliceVariant,
+                    transcript.ToString(Formatting.None));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"errored at transcript: {transcript.transcript}, ");
+                Console.WriteLine(e);
+                throw;
+            }
+            
+            
         }
 
         private static (string RefAminoAcids, string AltAminoAcids) GetAllelesFromAminoAcids(string aminoAcids)
@@ -184,16 +195,34 @@ namespace NeoMutalyzerShared.NirvanaJson
 
         private static Interval GetIntervalFromRange(string range)
         {
-            if (range == null) return null;
+            if (string.IsNullOrEmpty(range)) return null;
 
-            // 2307-2310
-            string[] cols = range.Split('-');
+            var hasNegativeStart = range.StartsWith('-');
+            if (hasNegativeStart)
+            {
+                range = range.TrimStart('-');
+            }
 
-            int begin = int.Parse(cols[0]);
-            if (cols.Length == 1) return new Interval(begin, begin);
+            try
+            {
+                // 2307-2310
+                // need to account for -9-12 (e.g. start lost)
+                string[] cols = range.Split('-');
 
-            int end = int.Parse(cols[1]);
-            return new Interval(begin, end);
+                int begin = int.Parse(cols[0]);
+                if (hasNegativeStart) begin = -begin;
+                if (cols.Length == 1) return new Interval(begin, begin);
+
+                int end = int.Parse(cols[1]);
+                return new Interval(begin, end);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"invalid range:{range}");
+                Console.WriteLine(e);
+                throw;
+            }
+            
         }
 
         public void Dispose() => _reader.Dispose();
