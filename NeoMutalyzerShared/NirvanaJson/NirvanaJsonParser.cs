@@ -195,7 +195,7 @@ namespace NeoMutalyzerShared.NirvanaJson
 
         private static Interval GetIntervalFromRange(string range)
         {
-            if (string.IsNullOrEmpty(range)) return null;
+            if (string.IsNullOrEmpty(range) || range.Contains("?")) return null;
 
             var hasNegativeStart = range.StartsWith('-');
             if (hasNegativeStart)
@@ -207,7 +207,7 @@ namespace NeoMutalyzerShared.NirvanaJson
             {
                 // 2307-2310
                 // need to account for -9-12 (e.g. start lost)
-                string[] cols = range.Split('-');
+                string[] cols = range.Split('-',2);
 
                 int begin = int.Parse(cols[0]);
                 if (hasNegativeStart) begin = -begin;
