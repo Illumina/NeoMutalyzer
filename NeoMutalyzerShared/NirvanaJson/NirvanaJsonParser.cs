@@ -148,23 +148,13 @@ namespace NeoMutalyzerShared.NirvanaJson
             (string refAllele, string altAllele)         = GetAllelesFromCodons(codons);
             (string refAminoAcids, string altAminoAcids) = GetAllelesFromAminoAcids(aminoAcids);
 
-            try
-            {
-                Interval cdnaPos      = GetIntervalFromRange(cdnaRange);
-                Interval cdsPos       = GetIntervalFromRange(cdsRange);
-                Interval aminoAcidPos = GetIntervalFromRange(aaRange);
+            Interval cdnaPos      = GetIntervalFromRange(cdnaRange);
+            Interval cdsPos       = GetIntervalFromRange(cdsRange);
+            Interval aminoAcidPos = GetIntervalFromRange(aaRange);
                 
-                return new Transcript(id, geneId, refAllele, altAllele, refAminoAcids, altAminoAcids, cdnaPos, cdsPos,
-                    aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, isCanonical, isSpliceVariant,
-                    transcript.ToString(Formatting.None));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"errored at transcript: {transcript.transcript}, ");
-                Console.WriteLine(e);
-                throw;
-            }
-            
+            return new Transcript(id, geneId, refAllele, altAllele, refAminoAcids, altAminoAcids, cdnaPos, cdsPos,
+                aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, isCanonical, isSpliceVariant,
+                transcript.ToString(Formatting.None));
             
         }
 

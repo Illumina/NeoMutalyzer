@@ -57,17 +57,9 @@ namespace NeoMutalyzerShared.Validation
             
             ReadOnlySpan<char> downstreamSpan;
 
-            try
-            {
-                downstreamSpan = GetDownstreamBases(pos, refSpan);
-                if (downstreamSpan == ReadOnlySpan<char>.Empty) return rotatingBases;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"interval: {pos.Start}-{pos.End}, refSpan lenght:{refSpan.Length}");
-                Console.WriteLine(e);
-                throw;
-            }
+            downstreamSpan = GetDownstreamBases(pos, refSpan);
+            if (downstreamSpan == ReadOnlySpan<char>.Empty) return rotatingBases;
+            
             int numCombinedBases = numRotatingBases + downstreamSpan.Length;
             var combinedBases    = new char[numCombinedBases];
 
