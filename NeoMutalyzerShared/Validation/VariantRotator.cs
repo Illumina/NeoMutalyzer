@@ -21,17 +21,8 @@ namespace NeoMutalyzerShared.Validation
             string             rotatingBases = GetRotatingBases(refAllele, altAllele, variantType);
             ReadOnlySpan<char> combinedSpan;
             
-            try
-            {
-                combinedSpan = GetCombinedSequence(pos, refSpan, rotatingBases);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"interval: {pos.Start}-{pos.End}, refSpan lenght:{refSpan.Length}");
-                Console.WriteLine(e);
-                throw;
-            }
-
+            combinedSpan = GetCombinedSequence(pos, refSpan, rotatingBases);
+            
             int shiftOffset;
             var hasShifted = false;
 

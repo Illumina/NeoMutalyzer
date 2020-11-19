@@ -202,26 +202,20 @@ namespace NeoMutalyzerShared.NirvanaJson
             {
                 range = range.TrimStart('-');
             }
+            // cases to handle
+            // 2307-2310
+            // need to account for -9-12 (e.g. start lost)
+            // ?-12
+            // 5--3
 
-            try
-            {
-                // 2307-2310
-                // need to account for -9-12 (e.g. start lost)
-                string[] cols = range.Split('-',2);
+            string[] cols = range.Split('-',2);
 
-                int begin = int.Parse(cols[0]);
-                if (hasNegativeStart) begin = -begin;
-                if (cols.Length == 1) return new Interval(begin, begin);
+            int begin = int.Parse(cols[0]);
+            if (hasNegativeStart) begin = -begin;
+            if (cols.Length == 1) return new Interval(begin, begin);
 
-                int end = int.Parse(cols[1]);
-                return new Interval(begin, end);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"invalid range:{range}");
-                Console.WriteLine(e);
-                throw;
-            }
+            int end = int.Parse(cols[1]);
+            return new Interval(begin, end);
             
         }
 
