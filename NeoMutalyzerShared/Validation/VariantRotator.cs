@@ -10,15 +10,19 @@ namespace NeoMutalyzerShared.Validation
         {
             bool bothAllelesNull = refAllele   == null                 && altAllele   == null;
             bool notInsOrDel     = variantType != VariantType.deletion && variantType != VariantType.insertion;
-
+            
             if (refSequence == null || pos == null || bothAllelesNull || notInsOrDel)
                 return (pos, refAllele, altAllele, false);
+
+            if(!pos.Overlaps(1, refSequence.Length)) return (pos, refAllele, altAllele, false);
 
             ReadOnlySpan<char> refSpan = refSequence.AsSpan();
 
             string             rotatingBases = GetRotatingBases(refAllele, altAllele, variantType);
-            ReadOnlySpan<char> combinedSpan  = GetCombinedSequence(pos, refSpan, rotatingBases);
-
+            ReadOnlySpan<char> combinedSpan;
+            
+            combinedSpan = GetCombinedSequence(pos, refSpan, rotatingBases);
+            
             int shiftOffset;
             var hasShifted = false;
 
@@ -28,7 +32,7 @@ namespace NeoMutalyzerShared.Validation
             for (shiftOffset = 0; shiftOffset < maxCombinedBases; shiftOffset++)
             {
                 if (combinedSpan[shiftOffset] != combinedSpan[shiftOffset + numRotatingBases]) break;
-                hasShifted = true;
+                hasShifted = true;    
             }
 
             if (!hasShifted) return (pos, refAllele, altAllele, false);
@@ -50,9 +54,12 @@ namespace NeoMutalyzerShared.Validation
         {
             ReadOnlySpan<char> rotatingSpan     = rotatingBases.AsSpan();
             int                numRotatingBases = rotatingSpan.Length;
+            
+            ReadOnlySpan<char> downstreamSpan;
 
-            ReadOnlySpan<char> downstreamSpan = GetDownstreamBases(pos, refSpan);
-
+            downstreamSpan = GetDownstreamBases(pos, refSpan);
+            if (downstreamSpan == ReadOnlySpan<char>.Empty) return rotatingBases;
+            
             int numCombinedBases = numRotatingBases + downstreamSpan.Length;
             var combinedBases    = new char[numCombinedBases];
 
@@ -63,7 +70,7 @@ namespace NeoMutalyzerShared.Validation
         }
 
         private static ReadOnlySpan<char> GetDownstreamBases(Interval pos, ReadOnlySpan<char> refSpan) =>
-            pos.End >= refSpan.Length ? ReadOnlySpan<char>.Empty : refSpan.Slice(pos.End, refSpan.Length - pos.End);
+            pos.End < 0 || pos.End >= refSpan.Length ? ReadOnlySpan<char>.Empty : refSpan.Slice(pos.End, refSpan.Length - pos.End);
         
         private static string GetRotatingBases(string refAllele, string altAllele, VariantType variantType) =>
             variantType == VariantType.insertion ? altAllele : refAllele;

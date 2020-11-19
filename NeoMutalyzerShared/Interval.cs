@@ -22,6 +22,11 @@ namespace NeoMutalyzerShared
             return Start == other.Start && End == other.End;
         }
 
+        public bool Overlaps(int start, int end)
+        {
+            return Start <= end && start <= End;
+        }
+
         public override int GetHashCode()
         {
             unchecked

@@ -151,10 +151,11 @@ namespace NeoMutalyzerShared.NirvanaJson
             Interval cdnaPos      = GetIntervalFromRange(cdnaRange);
             Interval cdsPos       = GetIntervalFromRange(cdsRange);
             Interval aminoAcidPos = GetIntervalFromRange(aaRange);
-
+                
             return new Transcript(id, geneId, refAllele, altAllele, refAminoAcids, altAminoAcids, cdnaPos, cdsPos,
                 aminoAcidPos, hgvsCoding, hgvsProtein, overlapsIntronAndExon, isCanonical, isSpliceVariant,
                 transcript.ToString(Formatting.None));
+            
         }
 
         private static (string RefAminoAcids, string AltAminoAcids) GetAllelesFromAminoAcids(string aminoAcids)
@@ -184,16 +185,28 @@ namespace NeoMutalyzerShared.NirvanaJson
 
         private static Interval GetIntervalFromRange(string range)
         {
-            if (range == null) return null;
+            if (string.IsNullOrEmpty(range) || range.Contains("?")) return null;
 
+            var hasNegativeStart = range.StartsWith('-');
+            if (hasNegativeStart)
+            {
+                range = range.TrimStart('-');
+            }
+            // cases to handle
             // 2307-2310
-            string[] cols = range.Split('-');
+            // need to account for -9-12 (e.g. start lost)
+            // ?-12
+            // 5--3
+
+            string[] cols = range.Split('-',2);
 
             int begin = int.Parse(cols[0]);
+            if (hasNegativeStart) begin = -begin;
             if (cols.Length == 1) return new Interval(begin, begin);
 
             int end = int.Parse(cols[1]);
             return new Interval(begin, end);
+            
         }
 
         public void Dispose() => _reader.Dispose();
