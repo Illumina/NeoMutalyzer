@@ -46,6 +46,10 @@ namespace NeoMutalyzerShared.HgvsParsing
         // NP_001284534.1:p.(Met1_?4)
         private static readonly Regex _unknownRegex =
             new Regex($"{prefix}{aaAbbrev}{position}_{aaAbbrev}{position}{suffix}", RegexOptions.Compiled);
+        
+        // NP_004949.1:p.Met1?
+        private static readonly Regex _startLostRegex =
+            new Regex($"^[^:]+:p\\.([a-zA-Z]+)1\\?", RegexOptions.Compiled);
 
         // NM_001005484.1:c.180A>G(p.(Ser60=))
         // NM_032129.2:c.1575_1576delCCinsAT(p.(AlaLeu525=))
@@ -66,6 +70,7 @@ namespace NeoMutalyzerShared.HgvsParsing
             if (hgvsProtein.Contains("fs")) return ParseFrameshift(hgvsProtein);
             if (hgvsProtein.Contains("extTer")) return ParseExtension(hgvsProtein);
             if (hgvsProtein.Contains("dup")) return ParseDuplication(hgvsProtein);
+            if (hgvsProtein.EndsWith("1?")) return ParseStartLost(hgvsProtein);
             if (hgvsProtein.EndsWith(":p.?") || hgvsProtein.EndsWith(":p.0?")) return null;
             if (IsUnknown(hgvsProtein)) return ParseUnknown(hgvsProtein); // TODO: this should be deprecated
             return ParseSubstitution(hgvsProtein);
@@ -130,6 +135,17 @@ namespace NeoMutalyzerShared.HgvsParsing
             ProteinPosition end    = hasEnd ? Convert(match.Groups[4].Value, match.Groups[3].Value) : null;
 
             return new ProteinInterval(start, end, null);
+        }
+
+        private static ProteinInterval ParseStartLost(string hgvsProtein)
+        {
+            Match match = _startLostRegex.Match(hgvsProtein);
+            if (!match.Success) throw new InvalidDataException($"Unable to apply HGVS p. regex to: {hgvsProtein}");
+
+            const string posString = "1";
+            ProteinPosition start = Convert(posString, match.Groups[1].Value);
+
+            return new ProteinInterval(start, null, null);
         }
 
         private static ProteinInterval ParseDelIns(string hgvsProtein)

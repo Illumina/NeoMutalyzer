@@ -170,6 +170,16 @@ namespace UnitTests.HgvsParsing
         }
 
         [Theory]
+        [InlineData("NP_004949.1:p.Met1?", "M", 1)]
+        public void Parse_StartLost_NewConvention(string hgvsProtein, string expectedStartRef, int start)
+        {
+            var expectedStart = new ProteinPosition(start, expectedStartRef[0]);
+            
+            ProteinInterval actual = HgvsProteinParser.Parse(hgvsProtein);
+            Assert.Equal(expectedStart, actual.Start);
+        }
+
+        [Theory]
         [InlineData("NP_112199.2:p.0?")]
         [InlineData("NP_112199.2:p.?")]
         public void Parse_StartLost(string hgvsProtein)

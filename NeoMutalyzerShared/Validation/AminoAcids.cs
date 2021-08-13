@@ -30,7 +30,8 @@ namespace NeoMutalyzerShared.Validation
             {"Tyr", 'Y'},
             {"Glx", 'Z'},
             {"Ter", '*'},
-            {"_?_", '?'}
+            {"_?_", '?'},
+            {"Xaa", 'X'}
         };
         
         public static string GetIupacCode(string aminoAcids3)
