@@ -1,5 +1,7 @@
 # NeoMutalyzer
 
+NeoMutalyzer is licensed under [PolyForm Strict License 1.0.0](https://github.com/Illumina/NeoMutalyzer/blob/main/LICENSE) 
+
 NeoMutalyzer is a testing tool that validates transcript mapping in Nirvana JSON files. Specifically it checks the following:
 * cDNA position
 * CDS position
